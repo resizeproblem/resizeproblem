@@ -427,8 +427,8 @@ input:focus {
 
 <input type="file"
   id="fileInput"
-  accept="image/*"
-  style="position:fixed;left:-9999px;top:-9999px;opacity:0;">
+  accept="image/jpeg,image/png,image/webp,image/*"
+  style="display:none;">
 
 <div class="drop-zone" id="dropZone">
   <div style="font-size:38px;color:#2563eb">⬆</div>
@@ -629,7 +629,6 @@ let cropper = null;
 let isCropMode = false;
 let isRatioLocked = false;
 let currentRotation = 0;
-let sourceObjectUrl = null;
 let currentObjectUrl = null;
 let currentDataUrl = null;
 let finalImageBlob = null;
@@ -663,7 +662,6 @@ const shareDownloadBtn = document.getElementById('shareDownloadBtn');
 
 // Trigger file picker reliably on tap
 dropZone.addEventListener('click', () => {
-  fileInput.value = '';
   fileInput.click();
 });
 
@@ -755,70 +753,102 @@ function disableCropMode() {
 }
 
 // ===============================
-// SHOW LOADED IMAGE IN BOX
+// SAFE MOBILE IMAGE DOWNSCALER (PREVENTS ANDROID CHROME RAM CRASH)
 // ===============================
-function showLoadedImage(srcUrl) {
-  imageToCrop.onload = function() {
-    dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
-    dropZone.style.display = 'none';
-    cropperContainerBox.style.display = 'block';
-    nextPhotoBtn.style.display = 'block';
-    resultStatus.style.display = 'none';
-    finalImageBlob = null;
+async function createSafePreviewDataUrl(file) {
+  const MAX_DIM = 1600;
 
-    directDownloadLink.removeAttribute('href');
-    directDownloadLink.style.pointerEvents = 'none';
-    directDownloadLink.style.opacity = '.5';
-  };
+  if (typeof createImageBitmap === 'function') {
+    try {
+      const bitmap = await createImageBitmap(file);
+      let w = bitmap.width;
+      let h = bitmap.height;
+      if (w > MAX_DIM || h > MAX_DIM) {
+        const scale = MAX_DIM / Math.max(w, h);
+        w = Math.round(w * scale);
+        h = Math.round(h * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(bitmap, 0, 0, w, h);
+      bitmap.close();
+      return canvas.toDataURL('image/jpeg', 0.92);
+    } catch (e) {
+      // Fallback below
+    }
+  }
 
-  imageToCrop.onerror = function() {
-    dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
-    showMessage('फोटो स्क्रीन पर लोड नहीं हो सकी। कृपया दूसरी फोटो चुनें।');
-  };
-
-  imageToCrop.style.transform = 'rotate(0deg)';
-  imageToCrop.src = srcUrl;
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if (w > MAX_DIM || h > MAX_DIM) {
+          const scale = MAX_DIM / Math.max(w, h);
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.92));
+      };
+      img.onerror = () => reject(new Error('फोटो डिकोड नहीं हो सकी। कृपया JPG या PNG चुनें।'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('फाइल पढ़ने में समस्या हुई।'));
+    reader.readAsDataURL(file);
+  });
 }
 
 // ===============================
-// LOAD IMAGE (MOBILE FAST & SAFE)
+// LOAD IMAGE INTO BOX
 // ===============================
-function handleSelectedFile(file) {
+async function handleSelectedFile(file) {
   if (!file) return;
 
-  if (file.size > 35 * 1024 * 1024) {
-    showMessage('कृपया 35 MB से छोटी फोटो चुनें।');
-    fileInput.value = '';
-    return;
-  }
-
-  dropZoneText.textContent = 'फोटो लोड हो रही है...';
+  dropZoneText.textContent = 'फोटो लोड हो रही है, कृपया रुकें...';
   currentRotation = 0;
   disableCropMode();
 
-  if (sourceObjectUrl) {
-    URL.revokeObjectURL(sourceObjectUrl);
-    sourceObjectUrl = null;
-  }
-
   try {
-    sourceObjectUrl = URL.createObjectURL(file);
-    const tester = new Image();
-    tester.onload = () => showLoadedImage(sourceObjectUrl);
-    tester.onerror = () => {
-      const reader = new FileReader();
-      reader.onload = e => showLoadedImage(e.target.result);
-      reader.onerror = () => {
-        dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
-        showMessage('फोटो पढ़ने में समस्या हुई। कृपया JPG/PNG फोटो चुनें।');
-      };
-      reader.readAsDataURL(file);
+    const safeDataUrl = await createSafePreviewDataUrl(file);
+
+    imageToCrop.onload = function() {
+      dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
+      dropZone.style.display = 'none';
+      cropperContainerBox.style.display = 'block';
+      nextPhotoBtn.style.display = 'block';
+      resultStatus.style.display = 'none';
+      finalImageBlob = null;
+
+      directDownloadLink.removeAttribute('href');
+      directDownloadLink.style.pointerEvents = 'none';
+      directDownloadLink.style.opacity = '.5';
     };
-    tester.src = sourceObjectUrl;
+
+    imageToCrop.onerror = function() {
+      dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
+      showMessage('फोटो स्क्रीन पर नहीं दिख सकी। कृपया दूसरी फोटो चुनें।');
+    };
+
+    imageToCrop.style.transform = 'rotate(0deg)';
+    imageToCrop.src = safeDataUrl;
   } catch (err) {
-    const reader = new FileReader();
-    reader.onload = e => showLoadedImage(e.target.result);
-    reader.readAsDataURL(file);
+    dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
+    showMessage(err.message || 'फोटो लोड नहीं हो सकी। कृपया दूसरी JPG/PNG फोटो चुनें।');
+  } finally {
+    fileInput.value = '';
   }
 }
 
@@ -874,47 +904,4 @@ document.getElementById('rotateLeftBtn').addEventListener('click', () => {
   if (cropper) {
     cropper.rotate(-90);
   } else {
-    imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
-  }
-});
-
-document.getElementById('rotateRightBtn').addEventListener('click', () => {
-  currentRotation = (currentRotation + 90) % 360;
-  if (cropper) {
-    cropper.rotate(90);
-  } else {
-    imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
-  }
-});
-
-lockRatioBtn.addEventListener('click', () => {
-  if (!cropper) return;
-  isRatioLocked = !isRatioLocked;
-  if (isRatioLocked) {
-    lockRatioBtn.textContent = '🔓 Free Crop';
-    updatePreviewAndRatio();
-  } else {
-    lockRatioBtn.textContent = '🔒 Ratio Lock';
-    cropper.setAspectRatio(NaN);
-  }
-});
-
-// ===============================
-// GENERATE CANVAS (CROPPED OR FULL FIXED IMAGE)
-// ===============================
-function getTargetCanvas(targetW, targetH) {
-  if (cropper && isCropMode) {
-    return cropper.getCroppedCanvas({
-      width: targetW,
-      height: targetH,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high',
-      fillColor: '#FFFFFF'
-    });
-  }
-
-  // Full fixed image without cropping
-  const canvas = document.createElement('canvas');
-  canvas.width = targetW;
-  canvas.height = targetH;
- 
+    imageTo
