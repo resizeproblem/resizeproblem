@@ -647,129 +647,15 @@ let cropper = null;
 let isCropMode = false;
 let isRatioLocked = false;
 let currentRotation = 0;
+let originalFullImage = null;
 let currentObjectUrl = null;
 let currentDataUrl = null;
-let finalImageBlob = null;
-let finalFileName = 'ResizeProblem.jpg';
-
+// ... existing code ... -->
 // ===============================
-// ELEMENTS
+// SAFE MOBILE IMAGE DOWNSCALER + REAL PIXELS
 // ===============================
-const fileInput = document.getElementById('fileInput');
-const dropZone = document.getElementById('dropZone');
-const dropZoneText = document.getElementById('dropZoneText');
-const cropperContainerBox = document.getElementById('cropperContainerBox');
-const imageToCrop = document.getElementById('imageToCrop');
-
-const toggleCropBtn = document.getElementById('toggleCropBtn');
-const lockRatioBtn = document.getElementById('lockRatioBtn');
-
-const unitSelect = document.getElementById('unitSelect');
-const widthInput = document.getElementById('widthInput');
-const heightInput = document.getElementById('heightInput');
-const dpiInput = document.getElementById('dpiInput');
-const kbInput = document.getElementById('kbInput');
-const sizeUnitSelect = document.getElementById('sizeUnitSelect');
-const pixelPreview = document.getElementById('pixelPreview');
-const processBtn = document.getElementById('processBtn');
-const nextPhotoBtn = document.getElementById('nextPhotoBtn');
-const resultStatus = document.getElementById('resultStatus');
-const directDownloadLink = document.getElementById('directDownloadLink');
-const finalPreviewImg = document.getElementById('finalPreviewImg');
-const shareDownloadBtn = document.getElementById('shareDownloadBtn');
-
-// ===============================
-// PIXEL CALCULATION
-// ===============================
-function getCalculatedPixels() {
-  const unit = unitSelect.value;
-  const rawW = Number(widthInput.value);
-  const rawH = Number(heightInput.value);
-  const dpi = Number(dpiInput.value);
-
-  if (!Number.isFinite(rawW) || !Number.isFinite(rawH) || rawW <= 0 || rawH <= 0) {
-    throw new Error('Width और Height सही भरें।');
-  }
-
-  if (!Number.isFinite(dpi) || dpi < 72 || dpi > 1200) {
-    throw new Error('DPI 72 से 1200 के बीच रखें।');
-  }
-
-  let pxW = rawW;
-  let pxH = rawH;
-
-  if (unit === 'cm') {
-    pxW = Math.round(rawW / 2.54 * dpi);
-    pxH = Math.round(rawH / 2.54 * dpi);
-  } else if (unit === 'mm') {
-    pxW = Math.round(rawW / 25.4 * dpi);
-    pxH = Math.round(rawH / 25.4 * dpi);
-  } else {
-    pxW = Math.round(rawW);
-    pxH = Math.round(rawH);
-  }
-
-  if (pxW < 10 || pxH < 10 || pxW > 10000 || pxH > 10000 || pxW * pxH > 40000000) {
-    throw new Error('आउटपुट साइज बहुत बड़ा या बहुत छोटा है।');
-  }
-
-  return { width: pxW, height: pxH };
-}
-
-// ===============================
-// UPDATE PIXEL PREVIEW
-// ===============================
-function updatePreviewAndRatio() {
-  try {
-    const dims = getCalculatedPixels();
-    pixelPreview.innerHTML = `आउटपुट साइज: <strong>${dims.width} × ${dims.height} px</strong>`;
-    if (cropper && isRatioLocked) {
-      cropper.setAspectRatio(dims.width / dims.height);
-    }
-  } catch (error) {
-    pixelPreview.textContent = error.message;
-  }
-}
-
-unitSelect.addEventListener('change', () => {
-  if (unitSelect.value === 'cm') {
-    widthInput.value = '3.5';
-    heightInput.value = '4.5';
-  } else if (unitSelect.value === 'mm') {
-    widthInput.value = '35';
-    heightInput.value = '45';
-  } else {
-    widthInput.value = '350';
-    heightInput.value = '450';
-  }
-  updatePreviewAndRatio();
-});
-
-[widthInput, heightInput, dpiInput].forEach(input => {
-  input.addEventListener('input', updatePreviewAndRatio);
-});
-
-// ===============================
-// RESET CROP MODE STATE
-// ===============================
-function disableCropMode() {
-  if (cropper) {
-    cropper.destroy();
-    cropper = null;
-  }
-  isCropMode = false;
-  isRatioLocked = false;
-  toggleCropBtn.textContent = '✂️ क्रॉप करें (Crop)';
-  toggleCropBtn.classList.add('active-crop');
-  lockRatioBtn.style.display = 'none';
-  imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
-}
-
-// ===============================
-// SAFE MOBILE IMAGE DOWNSCALER
-// ===============================
-async function createSafePreviewDataUrl(file) {
-  const MAX_DIM = 1400;
+async function loadOriginalAndPreview(file) {
+  const MAX_DIM = 1600;
 
   return new Promise((resolve, reject) => {
     const objectUrl = URL.createObjectURL(file);
@@ -777,27 +663,36 @@ async function createSafePreviewDataUrl(file) {
 
     img.onload = () => {
       try {
-        let w = img.naturalWidth || img.width;
-        let h = img.naturalHeight || img.height;
-        if (!w || !h) {
+        const realW = img.naturalWidth || img.width;
+        const realH = img.naturalHeight || img.height;
+        if (!realW || !realH) {
           URL.revokeObjectURL(objectUrl);
           reject(new Error('फोटो का साइज 0 है। दूसरी फोटो चुनें।'));
           return;
         }
-        if (w > MAX_DIM || h > MAX_DIM) {
-          const scale = MAX_DIM / Math.max(w, h);
-          w = Math.round(w * scale);
-          h = Math.round(h * scale);
+
+        let prevW = realW;
+        let prevH = realH;
+        if (prevW > MAX_DIM || prevH > MAX_DIM) {
+          const scale = MAX_DIM / Math.max(prevW, prevH);
+          prevW = Math.round(prevW * scale);
+          prevH = Math.round(prevH * scale);
         }
+
         const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
+        canvas.width = prevW;
+        canvas.height = prevH;
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, w, h);
-        ctx.drawImage(img, 0, 0, w, h);
+        ctx.fillRect(0, 0, prevW, prevH);
+        ctx.drawImage(img, 0, 0, prevW, prevH);
+
         URL.revokeObjectURL(objectUrl);
-        resolve(canvas.toDataURL('image/jpeg', 0.90));
+        resolve({
+          previewDataUrl: canvas.toDataURL('image/jpeg', 0.92),
+          realWidth: realW,
+          realHeight: realH
+        });
       } catch (err) {
         URL.revokeObjectURL(objectUrl);
         reject(err);
@@ -807,8 +702,19 @@ async function createSafePreviewDataUrl(file) {
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
       const reader = new FileReader();
-      reader.onload = e => resolve(e.target.result);
-      reader.onerror = () => reject(new Error('फाइल पढ़ने में समस्या हुई। कृपया JPG या PNG चुनें।'));
+      reader.onload = e => {
+        const fallbackImg = new Image();
+        fallbackImg.onload = () => {
+          resolve({
+            previewDataUrl: e.target.result,
+            realWidth: fallbackImg.naturalWidth || 350,
+            realHeight: fallbackImg.naturalHeight || 450
+          });
+        };
+        fallbackImg.onerror = () => reject(new Error('फाइल पढ़ने में समस्या हुई। कृपया JPG या PNG चुनें।'));
+        fallbackImg.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('फाइल पढ़ने में समस्या हुई।'));
       reader.readAsDataURL(file);
     };
 
@@ -827,11 +733,11 @@ async function handleSelectedFile(file) {
   disableCropMode();
 
   try {
-    const safeDataUrl = await createSafePreviewDataUrl(file);
+    const loaded = await loadOriginalAndPreview(file);
+    const natW = loaded.realWidth;
+    const natH = loaded.realHeight;
 
     imageToCrop.onload = function() {
-      const natW = imageToCrop.naturalWidth || 350;
-      const natH = imageToCrop.naturalHeight || 450;
       const dpi = Number(dpiInput.value) || 200;
 
       if (unitSelect.value === 'cm') {
@@ -857,13 +763,46 @@ async function handleSelectedFile(file) {
       directDownloadLink.style.pointerEvents = 'none';
       directDownloadLink.style.opacity = '.5';
     };
+
+    imageToCrop.onerror = function() {
+      dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
+      showMessage('फोटो स्क्रीन पर नहीं खुल सकी। कृपया दूसरी फोटो चुनें।');
+    };
+
+    imageToCrop.style.transform = 'rotate(0deg)';
+    imageToCrop.src = loaded.previewDataUrl;
+  } catch (err) {
+    dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
+    showMessage(err.message || 'फोटो लोड नहीं हो सकी।');
+  }
+}
+
+fileInput.addEventListener('change', event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) {
+    handleSelectedFile(file);
+  }
+});
+// ... existing code ... -->
+function canvasToBlob(canvas, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error('JPEG बनाने में समस्या हुई।'));
+      }
+    }, 'image/jpeg', quality);
+  });
+}
+
 async function compressToTargetKB(canvas, targetBytes) {
   let low = 0.01;
   let high = 1.0;
   let bestUnderBlob = null;
   let smallestBlob = null;
 
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < 15; i++) {
     const mid = (low + high) / 2;
     const blob = await canvasToBlob(canvas, mid);
 
@@ -879,7 +818,6 @@ async function compressToTargetKB(canvas, targetBytes) {
     }
   }
 
-  // Check maximum quality (1.0) if still smaller than target
   const maxQBlob = await canvasToBlob(canvas, 1.0);
   if (maxQBlob.size <= targetBytes) {
     bestUnderBlob = maxQBlob;
@@ -905,9 +843,69 @@ async function padBlobToExactBytes(blob, targetBytes) {
   if (blob.size >= targetBytes) {
     return blob;
   }
-  const padLen = targetBytes - blob.size;
   const origBuffer = await blob.arrayBuffer();
   const origBytes = new Uint8Array(origBuffer);
   const exactBytes = new Uint8Array(targetBytes);
   exactBytes.set(origBytes, 0);
-  //
+  return new Blob([exactBytes], { type: 'image/jpeg' });
+}
+// ... existing code ... -->
+    if (targetBytes < 2048 || targetBytes > 25 * 1024 * 1024) {
+      throw new Error('साइज 2 KB से 25 MB के बीच रखें।');
+    }
+
+    const canvas = getTargetCanvas(dims.width, dims.height);
+
+    if (!canvas) {
+      throw new Error('Canvas तैयार नहीं हो सका।');
+    }
+
+    const compressed = await compressToTargetKB(canvas, targetBytes);
+    let finalBlob = await injectJFIFDPI(compressed.blob, targetDPI);
+
+    // Re-adjust if JFIF header slightly increased size above target
+    if (finalBlob.size > targetBytes && compressed.metTarget) {
+      const tighter = await compressToTargetKB(canvas, Math.max(1024, targetBytes - 64));
+      finalBlob = await injectJFIFDPI(tighter.blob, targetDPI);
+    }
+
+    // Pad to exact requested KB / MB if smaller
+    if (finalBlob.size < targetBytes) {
+      finalBlob = await padBlobToExactBytes(finalBlob, targetBytes);
+    }
+
+    if (!finalBlob || finalBlob.size === 0) {
+      throw new Error('Final image empty है।');
+    }
+
+    clearPreviousOutput();
+
+    finalImageBlob = finalBlob;
+    currentObjectUrl = URL.createObjectURL(finalImageBlob);
+    currentDataUrl = await blobToDataURL(finalImageBlob);
+    finalFileName = `ResizeProblem_${dims.width}x${dims.height}_${targetDPI}dpi.jpg`;
+
+    directDownloadLink.href = currentDataUrl;
+    directDownloadLink.download = finalFileName;
+    directDownloadLink.style.pointerEvents = 'auto';
+    directDownloadLink.style.opacity = '1';
+
+    finalPreviewImg.src = currentDataUrl;
+
+    const finalKB = finalBlob.size / 1024;
+    const displaySize = sizeUnit === 'MB'
+      ? `${(finalKB / 1024).toFixed(2)} MB`
+      : `${finalKB.toFixed(2)} KB`;
+
+    document.getElementById('outDims').textContent = `${dims.width} × ${dims.height} px`;
+    document.getElementById('outSize').textContent = displaySize;
+    document.getElementById('outDPI').textContent = `${targetDPI} DPI`;
+
+    const statusHeader = document.getElementById('statusHeader');
+    const resultNote = document.getElementById('resultNote');
+
+    if (finalBlob.size === targetBytes) {
+      statusHeader.textContent = '✓ आपकी फोटो ठीक निर्धारित साइज में तैयार है!';
+      resultNote.textContent = `फाइल साइज बिल्कुल ${displaySize} (${finalBlob.size} Bytes) सेट कर दिया गया है।`;
+    } else {
+      statusHeader.textContent = '✓
