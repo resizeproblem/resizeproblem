@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -120,22 +121,22 @@ body {
   margin-top:10px;
   background:var(--primary);
   color:#ffffff;
-  padding:10px 20px;
+  padding:12px 22px;
   border-radius:8px;
-  font-size:14px;
+  font-size:15px;
   font-weight:bold;
 }
 
-.visually-hidden-input {
+.native-file-cover {
   position:absolute;
-  width:1px;
-  height:1px;
-  padding:0;
-  margin:-1px;
-  overflow:hidden;
-  clip:rect(0, 0, 0, 0);
-  white-space:nowrap;
-  border:0;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  opacity:0.01;
+  cursor:pointer;
+  z-index:10;
+  font-size:100px;
 }
 
 .cropper-container-box {
@@ -437,18 +438,17 @@ input:focus {
   फोटो अपलोड करें (ज़रूरत हो तो Crop करें)
 </div>
 
-<input type="file"
-  id="fileInput"
-  class="visually-hidden-input"
-  accept="image/*">
-
-<label class="drop-zone" id="dropZone" for="fileInput">
+<div class="drop-zone" id="dropZone">
   <div style="font-size:38px;color:#2563eb">⬆</div>
   <strong id="dropZoneText">यहाँ क्लिक करके फोटो चुनें</strong>
   <p>JPG, PNG, WebP सपोर्ट</p>
   <p>फोटो आपके डिवाइस में ही प्रोसेस होगी।</p>
-  <span class="visible-file-btn">📁 गैलरी से फोटो चुनें</span>
-</label>
+  <span class="visible-file-btn">📁 गैलरी / फाइल से फोटो चुनें</span>
+  <input type="file"
+    id="fileInput"
+    class="native-file-cover"
+    accept="image/jpeg,image/png,image/webp,image/*">
+</div>
 
 <div class="cropper-container-box" id="cropperContainerBox">
 
@@ -763,39 +763,21 @@ function disableCropMode() {
 // SAFE MOBILE IMAGE DOWNSCALER
 // ===============================
 async function createSafePreviewDataUrl(file) {
-  const MAX_DIM = 1600;
-
-  if (typeof createImageBitmap === 'function') {
-    try {
-      const bitmap = await createImageBitmap(file);
-      let w = bitmap.width;
-      let h = bitmap.height;
-      if (w > MAX_DIM || h > MAX_DIM) {
-        const scale = MAX_DIM / Math.max(w, h);
-        w = Math.round(w * scale);
-        h = Math.round(h * scale);
-      }
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(bitmap, 0, 0, w, h);
-      bitmap.close();
-      return canvas.toDataURL('image/jpeg', 0.92);
-    } catch (e) {
-      // Fallback below
-    }
-  }
+  const MAX_DIM = 1400;
 
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.onload = () => {
+      try {
         let w = img.naturalWidth || img.width;
         let h = img.naturalHeight || img.height;
+        if (!w || !h) {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error('फोटो का साइज 0 है। दूसरी फोटो चुनें।'));
+          return;
+        }
         if (w > MAX_DIM || h > MAX_DIM) {
           const scale = MAX_DIM / Math.max(w, h);
           w = Math.round(w * scale);
@@ -808,13 +790,23 @@ async function createSafePreviewDataUrl(file) {
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, w, h);
         ctx.drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.92));
-      };
-      img.onerror = () => reject(new Error('फोटो डिकोड नहीं हो सकी। कृपया JPG या PNG चुनें।'));
-      img.src = e.target.result;
+        URL.revokeObjectURL(objectUrl);
+        resolve(canvas.toDataURL('image/jpeg', 0.90));
+      } catch (err) {
+        URL.revokeObjectURL(objectUrl);
+        reject(err);
+      }
     };
-    reader.onerror = () => reject(new Error('फाइल पढ़ने में समस्या हुई।'));
-    reader.readAsDataURL(file);
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('फाइल पढ़ने में समस्या हुई। कृपया JPG या PNG चुनें।'));
+      reader.readAsDataURL(file);
+    };
+
+    img.src = objectUrl;
   });
 }
 
@@ -824,7 +816,7 @@ async function createSafePreviewDataUrl(file) {
 async function handleSelectedFile(file) {
   if (!file) return;
 
-  dropZoneText.textContent = 'फोटो लोड हो रही है, कृपया रुकें...';
+  dropZoneText.textContent = `लोड हो रहा है: ${file.name} (${Math.round(file.size / 1024)} KB)...`;
   currentRotation = 0;
   disableCropMode();
 
@@ -854,14 +846,14 @@ async function handleSelectedFile(file) {
   } catch (err) {
     dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
     showMessage(err.message || 'फोटो लोड नहीं हो सकी। कृपया दूसरी JPG/PNG फोटो चुनें।');
-  } finally {
-    fileInput.value = '';
   }
 }
 
 fileInput.addEventListener('change', event => {
   const file = event.target.files && event.target.files[0];
-  handleSelectedFile(file);
+  if (file) {
+    handleSelectedFile(file);
+  }
 });
 
 // ===============================
@@ -909,4 +901,386 @@ toggleCropBtn.addEventListener('click', () => {
 document.getElementById('rotateLeftBtn').addEventListener('click', () => {
   currentRotation = (currentRotation - 90) % 360;
   if (cropper) {
-    cropper.r
+    cropper.rotate(-90);
+  } else {
+    imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
+  }
+});
+
+document.getElementById('rotateRightBtn').addEventListener('click', () => {
+  currentRotation = (currentRotation + 90) % 360;
+  if (cropper) {
+    cropper.rotate(90);
+  } else {
+    imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
+  }
+});
+
+lockRatioBtn.addEventListener('click', () => {
+  if (!cropper) return;
+  isRatioLocked = !isRatioLocked;
+  if (isRatioLocked) {
+    lockRatioBtn.textContent = '🔓 Free Crop';
+    updatePreviewAndRatio();
+  } else {
+    lockRatioBtn.textContent = '🔒 Ratio Lock';
+    cropper.setAspectRatio(NaN);
+  }
+});
+
+// ===============================
+// GENERATE CANVAS (CROPPED OR FULL FIXED IMAGE)
+// ===============================
+function getTargetCanvas(targetW, targetH) {
+  if (cropper && isCropMode) {
+    return cropper.getCroppedCanvas({
+      width: targetW,
+      height: targetH,
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'high',
+      fillColor: '#FFFFFF'
+    });
+  }
+
+  const canvas = document.createElement('canvas');
+  canvas.width = targetW;
+  canvas.height = targetH;
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0, 0, targetW, targetH);
+
+  ctx.save();
+  ctx.translate(targetW / 2, targetH / 2);
+  ctx.rotate((currentRotation * Math.PI) / 180);
+
+  const normalizedAngle = Math.abs(currentRotation % 360);
+  if (normalizedAngle === 90 || normalizedAngle === 270) {
+    ctx.drawImage(imageToCrop, -targetH / 2, -targetW / 2, targetH, targetW);
+  } else {
+    ctx.drawImage(imageToCrop, -targetW / 2, -targetH / 2, targetW, targetH);
+  }
+  ctx.restore();
+
+  return canvas;
+}
+
+// ===============================
+// JPEG COMPRESSION
+// ===============================
+function canvasToBlob(canvas, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error('JPEG बनाने में समस्या हुई।'));
+      }
+    }, 'image/jpeg', quality);
+  });
+}
+
+async function compressToTargetKB(canvas, maxBytes) {
+  const qualities = [
+    0.95, 0.90, 0.85, 0.80,
+    0.75, 0.70, 0.65, 0.60,
+    0.55, 0.50, 0.45, 0.40,
+    0.35, 0.30, 0.25, 0.20,
+    0.15, 0.10, 0.05, 0.02
+  ];
+
+  let smallestBlob = null;
+
+  for (const quality of qualities) {
+    const blob = await canvasToBlob(canvas, quality);
+
+    if (!smallestBlob || blob.size < smallestBlob.size) {
+      smallestBlob = blob;
+    }
+
+    if (blob.size <= maxBytes) {
+      return {
+        blob: blob,
+        metTarget: true
+      };
+    }
+  }
+
+  return {
+    blob: smallestBlob,
+    metTarget: false
+  };
+}
+
+// ===============================
+// ADD DPI TO JPEG
+// ===============================
+async function injectJFIFDPI(blob, dpi) {
+  const buffer = await blob.arrayBuffer();
+  const view = new DataView(buffer);
+
+  if (buffer.byteLength < 4 || view.getUint16(0) !== 0xFFD8) {
+    throw new Error('Invalid JPEG file');
+  }
+
+  const dpiVal = Math.max(1, Math.min(65535, Math.round(dpi)));
+
+  const app0 = new Uint8Array([
+    0xFF, 0xE0,
+    0x00, 0x10,
+    0x4A, 0x46, 0x49, 0x46, 0x00,
+    0x01, 0x01,
+    0x01,
+    (dpiVal >> 8) & 255,
+    dpiVal & 255,
+    (dpiVal >> 8) & 255,
+    dpiVal & 255,
+    0x00, 0x00
+  ]);
+
+  let offset = 2;
+
+  if (buffer.byteLength >= 6 && view.getUint16(2) === 0xFFE0) {
+    const segmentLength = view.getUint16(4);
+    if (segmentLength >= 2 && 4 + segmentLength <= buffer.byteLength) {
+      offset = 4 + segmentLength;
+    }
+  }
+
+  const rest = new Uint8Array(buffer, offset);
+  const result = new Uint8Array(2 + app0.length + rest.length);
+
+  result.set([0xFF, 0xD8], 0);
+  result.set(app0, 2);
+  result.set(rest, 2 + app0.length);
+
+  return new Blob([result], { type: 'image/jpeg' });
+}
+
+// ===============================
+// CLEAN PREVIOUS DOWNLOAD
+// ===============================
+function clearPreviousOutput() {
+  if (currentObjectUrl) {
+    URL.revokeObjectURL(currentObjectUrl);
+    currentObjectUrl = null;
+  }
+
+  currentDataUrl = null;
+  finalImageBlob = null;
+  finalPreviewImg.removeAttribute('src');
+  directDownloadLink.removeAttribute('href');
+  directDownloadLink.style.pointerEvents = 'none';
+  directDownloadLink.style.opacity = '.5';
+}
+
+function blobToDataURL(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Data URL बनाने में समस्या हुई।'));
+    reader.readAsDataURL(blob);
+  });
+}
+
+// ===============================
+// PROCESS IMAGE
+// ===============================
+processBtn.addEventListener('click', async () => {
+  if (!imageToCrop.src) {
+    showMessage('कृपया पहले फोटो अपलोड करें!');
+    return;
+  }
+
+  processBtn.disabled = true;
+  processBtn.innerText = 'फोटो तैयार हो रही है...';
+
+  try {
+    const dims = getCalculatedPixels();
+    const targetKB = Number(kbInput.value);
+    const targetDPI = Number(dpiInput.value);
+
+    if (!Number.isFinite(targetKB) || targetKB < 5 || targetKB > 5000) {
+      throw new Error('KB की सीमा 5 से 5000 रखें।');
+    }
+
+    const canvas = getTargetCanvas(dims.width, dims.height);
+
+    if (!canvas) {
+      throw new Error('Canvas तैयार नहीं हो सका।');
+    }
+
+    const compressed = await compressToTargetKB(canvas, targetKB * 1024);
+    const finalBlob = await injectJFIFDPI(compressed.blob, targetDPI);
+
+    if (!finalBlob || finalBlob.size === 0) {
+      throw new Error('Final image empty है।');
+    }
+
+    clearPreviousOutput();
+
+    finalImageBlob = finalBlob;
+    currentObjectUrl = URL.createObjectURL(finalImageBlob);
+    currentDataUrl = await blobToDataURL(finalImageBlob);
+    finalFileName = `ResizeProblem_${dims.width}x${dims.height}_${targetDPI}dpi.jpg`;
+
+    directDownloadLink.href = currentDataUrl;
+    directDownloadLink.download = finalFileName;
+    directDownloadLink.style.pointerEvents = 'auto';
+    directDownloadLink.style.opacity = '1';
+
+    finalPreviewImg.src = currentDataUrl;
+
+    document.getElementById('outDims').textContent = `${dims.width} × ${dims.height} px`;
+    document.getElementById('outSize').textContent = `${(finalBlob.size / 1024).toFixed(2)} KB`;
+    document.getElementById('outDPI').textContent = `${targetDPI} DPI`;
+
+    const statusHeader = document.getElementById('statusHeader');
+    const resultNote = document.getElementById('resultNote');
+
+    if (compressed.metTarget) {
+      statusHeader.textContent = '✓ आपकी फोटो तैयार है!';
+      resultNote.textContent = 'आपकी फोटो निर्धारित KB सीमा में तैयार है।';
+    } else {
+      statusHeader.textContent = '✓ फोटो तैयार है, लेकिन KB सीमा पूरी नहीं हुई।';
+      resultNote.textContent = 'फाइल को और छोटा करने के लिए साइज कम करें या KB सीमा बढ़ाएं।';
+    }
+
+    resultStatus.style.display = 'block';
+    resultStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  } catch (error) {
+    console.error(error);
+    showMessage(error.message || 'फोटो तैयार करने में समस्या हुई।');
+  } finally {
+    processBtn.disabled = false;
+    processBtn.innerText = 'फोटो तैयार करें (Resize & Compress)';
+  }
+});
+
+// ===============================
+// UNIVERSAL DIRECT DOWNLOAD HANDLER
+// ===============================
+directDownloadLink.addEventListener('click', function(event) {
+  if (!finalImageBlob || !currentDataUrl) {
+    event.preventDefault();
+    showMessage('पहले फोटो तैयार करें!');
+    return;
+  }
+
+  this.href = currentDataUrl;
+  this.download = finalFileName;
+});
+
+// ===============================
+// NEW WINDOW / FALLBACK SAVE HANDLER
+// ===============================
+shareDownloadBtn.addEventListener('click', async function() {
+  if (!finalImageBlob) {
+    showMessage('पहले फोटो तैयार करें।');
+    return;
+  }
+
+  const imageUrl = URL.createObjectURL(finalImageBlob);
+  const newTab = window.open(imageUrl, '_blank');
+
+  if (newTab) {
+    showMessage(
+      'फोटो नए पेज में खुल गई है। फोटो को दबाकर रखें और Save Image चुनें।'
+    );
+  } else {
+    const link = document.createElement('a');
+    link.href = currentDataUrl || imageUrl;
+    link.download = finalFileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    showMessage(
+      'यदि डाउनलोड शुरू नहीं हुआ, तो इस पेज को Chrome में खोलें।'
+    );
+  }
+
+  setTimeout(() => URL.revokeObjectURL(imageUrl), 60000);
+});
+
+// ===============================
+// NEXT PHOTO UPLOAD
+// ===============================
+nextPhotoBtn.addEventListener('click', () => {
+  currentRotation = 0;
+  disableCropMode();
+  clearPreviousOutput();
+  fileInput.value = '';
+  imageToCrop.removeAttribute('src');
+  cropperContainerBox.style.display = 'none';
+  resultStatus.style.display = 'none';
+  nextPhotoBtn.style.display = 'none';
+  dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
+  dropZone.style.display = 'block';
+});
+
+// ===============================
+// PWA MOBILE APP ENGINE
+// ===============================
+const appIconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="115" fill="#2563eb"/><text x="50%" y="55%" font-size="220" font-family="Arial, sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">RP</text></svg>`;
+const iconDataUrl = 'data:image/svg+xml;base64,' + btoa(appIconSvg);
+
+const appleIcon = document.createElement('link');
+appleIcon.rel = 'apple-touch-icon';
+appleIcon.href = iconDataUrl;
+document.head.appendChild(appleIcon);
+
+const favIcon = document.createElement('link');
+favIcon.rel = 'icon';
+favIcon.href = iconDataUrl;
+document.head.appendChild(favIcon);
+
+const manifest = {
+  name: "ResizeProblem - Photo & Signature Resizer",
+  short_name: "ResizeProblem",
+  description: "Resize, Crop, set DPI and KB for exam photos and signatures.",
+  start_url: location.href,
+  display: "standalone",
+  orientation: "portrait",
+  background_color: "#f1f5f9",
+  theme_color: "#2563eb",
+  icons: [
+    {
+      src: iconDataUrl,
+      sizes: "512x512",
+      type: "image/svg+xml",
+      purpose: "any maskable"
+    }
+  ]
+};
+
+const manifestTag = document.createElement('link');
+manifestTag.rel = 'manifest';
+manifestTag.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
+document.head.appendChild(manifestTag);
+
+let deferredInstallPrompt = null;
+const installAppBtn = document.getElementById('installAppBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  installAppBtn.style.display = 'inline-block';
+});
+
+installAppBtn.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const { outcome } = await deferredInstallPrompt.userChoice;
+  if (outcome === 'accepted') {
+    installAppBtn.style.display = 'none';
+  }
+  deferredInstallPrompt = null;
+});
+</script>
+</body>
+</html>
+```
