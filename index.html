@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -364,7 +363,6 @@ input:focus {
   margin-top:12px;
 }
 
-/* Custom Alert Modal */
 .modal-overlay {
   display:none;
   position:fixed;
@@ -422,7 +420,6 @@ input:focus {
 
 <body>
 
-<!-- Custom Message Modal -->
 <div class="modal-overlay" id="customModal">
   <div class="modal-box">
     <div class="modal-msg" id="customModalMsg"></div>
@@ -450,7 +447,7 @@ input:focus {
 <input type="file"
   id="fileInput"
   class="visually-hidden-input"
-  accept="image/*">
+  accept="image/jpeg,image/png,image/webp,image/*">
 
 <label class="drop-zone" id="dropZone" for="fileInput">
   <div style="font-size:38px;color:#2563eb">⬆</div>
@@ -637,9 +634,6 @@ style="display:none">
 <script>
 'use strict';
 
-// ===============================
-// CUSTOM MESSAGE BOX
-// ===============================
 function showMessage(msg) {
   const modal = document.getElementById('customModal');
   document.getElementById('customModalMsg').textContent = msg;
@@ -650,9 +644,6 @@ document.getElementById('customModalClose').addEventListener('click', () => {
   document.getElementById('customModal').style.display = 'none';
 });
 
-// ===============================
-// GLOBAL VARIABLES
-// ===============================
 let cropper = null;
 let isCropMode = false;
 let isRatioLocked = false;
@@ -665,9 +656,6 @@ let currentDataUrl = null;
 let finalImageBlob = null;
 let finalFileName = 'ResizeProblem.jpg';
 
-// ===============================
-// ELEMENTS
-// ===============================
 const fileInput = document.getElementById('fileInput');
 const dropZone = document.getElementById('dropZone');
 const dropZoneText = document.getElementById('dropZoneText');
@@ -692,9 +680,6 @@ const directDownloadLink = document.getElementById('directDownloadLink');
 const finalPreviewImg = document.getElementById('finalPreviewImg');
 const shareDownloadBtn = document.getElementById('shareDownloadBtn');
 
-// ===============================
-// APPLY REAL DIMENSIONS TO INPUTS
-// ===============================
 function applyDimensionsToInputs(pxW, pxH) {
   const dpi = Number(dpiInput.value) || 200;
   if (unitSelect.value === 'cm') {
@@ -710,9 +695,6 @@ function applyDimensionsToInputs(pxW, pxH) {
   updatePreviewAndRatio();
 }
 
-// ===============================
-// PIXEL CALCULATION
-// ===============================
 function getCalculatedPixels() {
   const unit = unitSelect.value;
   const rawW = Number(widthInput.value);
@@ -748,9 +730,6 @@ function getCalculatedPixels() {
   return { width: pxW, height: pxH };
 }
 
-// ===============================
-// UPDATE PIXEL PREVIEW
-// ===============================
 function updatePreviewAndRatio() {
   if (!widthInput.value || !heightInput.value) {
     pixelPreview.textContent = 'पहले फोटो चुनें — असली Width और Height अपने-आप दिखेगी';
@@ -783,9 +762,6 @@ unitSelect.addEventListener('change', () => {
   input.addEventListener('input', updatePreviewAndRatio);
 });
 
-// ===============================
-// RESET CROP MODE STATE
-// ===============================
 function disableCropMode() {
   if (cropper) {
     cropper.destroy();
@@ -799,9 +775,6 @@ function disableCropMode() {
   imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
 }
 
-// ===============================
-// DIRECT INSTANT IMAGE DISPLAY
-// ===============================
 function showImageImmediately(srcString) {
   imageToCrop.onload = function() {
     realPhotoWidth = imageToCrop.naturalWidth || 350;
@@ -842,21 +815,20 @@ function handleSelectedFile(file) {
     uploadedBlobUrl = null;
   }
 
-  // First try instant FileReader DataURL so Android Chrome never loses blob reference
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    showImageImmediately(e.target.result);
-  };
-  reader.onerror = function() {
-    try {
-      uploadedBlobUrl = URL.createObjectURL(file);
-      showImageImmediately(uploadedBlobUrl);
-    } catch (err) {
+  try {
+    uploadedBlobUrl = URL.createObjectURL(file);
+    showImageImmediately(uploadedBlobUrl);
+  } catch (err) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      showImageImmediately(e.target.result);
+    };
+    reader.onerror = function() {
       dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
       showMessage('फोटो लोड नहीं हो सकी। कृपया दूसरी फोटो चुनें।');
-    }
-  };
-  reader.readAsDataURL(file);
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 fileInput.addEventListener('change', event => {
@@ -866,9 +838,13 @@ fileInput.addEventListener('change', event => {
   }
 });
 
-// ===============================
-// ACTIVATE CROP ONLY WHEN CLICKED
-// ===============================
+// Check if browser preserved file input on page restore
+window.addEventListener('pageshow', () => {
+  if (fileInput.files && fileInput.files[0] && !imageToCrop.src) {
+    handleSelectedFile(fileInput.files[0]);
+  }
+});
+
 toggleCropBtn.addEventListener('click', () => {
   if (!imageToCrop.src) return;
 
@@ -905,12 +881,35 @@ toggleCropBtn.addEventListener('click', () => {
   }
 });
 
-// ===============================
-// ROTATE & RATIO TOOLS
-// ===============================
 function handleRotationChange(delta) {
   currentRotation = (currentRotation + delta) % 360;
   if (cropper) {
     cropper.rotate(delta);
   } else {
-    imageToCrop.style.transform = `rotate(${currentRotati
+    imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
+  }
+  if (realPhotoWidth > 0 && realPhotoHeight > 0) {
+    const isRotated = Math.abs(currentRotation % 360) === 90 || Math.abs(currentRotation % 360) === 270;
+    applyDimensionsToInputs(
+      isRotated ? realPhotoHeight : realPhotoWidth,
+      isRotated ? realPhotoWidth : realPhotoHeight
+    );
+  }
+}
+
+document.getElementById('rotateLeftBtn').addEventListener('click', () => handleRotationChange(-90));
+document.getElementById('rotateRightBtn').addEventListener('click', () => handleRotationChange(90));
+
+lockRatioBtn.addEventListener('click', () => {
+  if (!cropper) return;
+  isRatioLocked = !isRatioLocked;
+  if (isRatioLocked) {
+    lockRatioBtn.textContent = '🔓 Free Crop';
+    updatePreviewAndRatio();
+  } else {
+    lockRatioBtn.textContent = '🔒 Ratio Lock';
+    cropper.setAspectRatio(NaN);
+  }
+});
+
+function ge
