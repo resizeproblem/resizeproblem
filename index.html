@@ -126,6 +126,18 @@ body {
   font-weight:bold;
 }
 
+.visually-hidden-input {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0, 0, 0, 0);
+  white-space:nowrap;
+  border:0;
+}
+
 .cropper-container-box {
   display:none;
   margin-top:12px;
@@ -427,16 +439,16 @@ input:focus {
 
 <input type="file"
   id="fileInput"
-  accept="image/jpeg,image/png,image/webp,image/*"
-  style="display:none;">
+  class="visually-hidden-input"
+  accept="image/*">
 
-<div class="drop-zone" id="dropZone">
+<label class="drop-zone" id="dropZone" for="fileInput">
   <div style="font-size:38px;color:#2563eb">⬆</div>
   <strong id="dropZoneText">यहाँ क्लिक करके फोटो चुनें</strong>
   <p>JPG, PNG, WebP सपोर्ट</p>
   <p>फोटो आपके डिवाइस में ही प्रोसेस होगी।</p>
   <span class="visible-file-btn">📁 गैलरी से फोटो चुनें</span>
-</div>
+</label>
 
 <div class="cropper-container-box" id="cropperContainerBox">
 
@@ -660,11 +672,6 @@ const directDownloadLink = document.getElementById('directDownloadLink');
 const finalPreviewImg = document.getElementById('finalPreviewImg');
 const shareDownloadBtn = document.getElementById('shareDownloadBtn');
 
-// Trigger file picker reliably on tap
-dropZone.addEventListener('click', () => {
-  fileInput.click();
-});
-
 // ===============================
 // PIXEL CALCULATION
 // ===============================
@@ -753,7 +760,7 @@ function disableCropMode() {
 }
 
 // ===============================
-// SAFE MOBILE IMAGE DOWNSCALER (PREVENTS ANDROID CHROME RAM CRASH)
+// SAFE MOBILE IMAGE DOWNSCALER
 // ===============================
 async function createSafePreviewDataUrl(file) {
   const MAX_DIM = 1600;
@@ -902,6 +909,4 @@ toggleCropBtn.addEventListener('click', () => {
 document.getElementById('rotateLeftBtn').addEventListener('click', () => {
   currentRotation = (currentRotation - 90) % 360;
   if (cropper) {
-    cropper.rotate(-90);
-  } else {
-    imageTo
+    cropper.r
