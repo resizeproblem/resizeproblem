@@ -10,9 +10,6 @@
 <meta name="apple-mobile-web-app-title" content="ResizeProblem">
 <title>ResizeProblem - Photo & Signature Resizer App</title>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-
 <style>
 :root {
   --primary:#2563eb;
@@ -90,7 +87,7 @@ body {
   display:block;
   border:2px dashed var(--primary);
   border-radius:12px;
-  padding:28px 12px;
+  padding:26px 12px;
   text-align:center;
   background:#eff6ff;
   cursor:pointer;
@@ -124,6 +121,16 @@ body {
   cursor:pointer;
   z-index:20;
   font-size:100px;
+}
+
+.picker-tip {
+  margin-top:8px;
+  font-size:12px;
+  color:#1e40af;
+  background:#dbeafe;
+  padding:8px 10px;
+  border-radius:8px;
+  text-align:center;
 }
 
 .cropper-container-box {
@@ -440,7 +447,11 @@ input:focus {
   <input type="file"
     id="fileInput"
     class="file-input-overlay"
-    accept="image/jpeg,image/png,image/webp,image/*">
+    accept="image/jpeg,image/png,image/webp">
+</div>
+
+<div class="picker-tip" id="pickerTip">
+  💡 यदि फोटो चुनने पर पेज रीलोड हो जाए, तो गैलरी में ऊपर दाईं तरफ <strong>⋮ (3 डॉट) → Browse</strong> से फोटो चुनें।
 </div>
 
 <div class="cropper-container-box" id="cropperContainerBox">
@@ -615,8 +626,6 @@ style="display:none">
 </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
 <script>
 'use strict';
 
@@ -631,6 +640,7 @@ document.getElementById('customModalClose').addEventListener('click', () => {
 });
 
 let cropper = null;
+let cropperLoaded = false;
 let isCropMode = false;
 let isRatioLocked = false;
 let currentRotation = 0;
@@ -645,6 +655,7 @@ let finalFileName = 'ResizeProblem.jpg';
 const fileInput = document.getElementById('fileInput');
 const dropZone = document.getElementById('dropZone');
 const dropZoneText = document.getElementById('dropZoneText');
+const pickerTip = document.getElementById('pickerTip');
 const cropperContainerBox = document.getElementById('cropperContainerBox');
 const imageToCrop = document.getElementById('imageToCrop');
 
@@ -665,6 +676,29 @@ const resultStatus = document.getElementById('resultStatus');
 const directDownloadLink = document.getElementById('directDownloadLink');
 const finalPreviewImg = document.getElementById('finalPreviewImg');
 const shareDownloadBtn = document.getElementById('shareDownloadBtn');
+
+function loadCropperAssets() {
+  if (cropperLoaded && typeof Cropper !== 'undefined') {
+    return Promise.resolve();
+  }
+  return new Promise((resolve, reject) => {
+    if (!document.getElementById('cropperCss')) {
+      const link = document.createElement('link');
+      link.id = 'cropperCss';
+      link.rel = 'stylesheet';
+      link.href = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css';
+      document.head.appendChild(link);
+    }
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js';
+    script.onload = () => {
+      cropperLoaded = true;
+      resolve();
+    };
+    script.onerror = () => reject(new Error('Cropper लोड नहीं हो सका। इंटरनेट चेक करें।'));
+    document.body.appendChild(script);
+  });
+}
 
 function applyDimensionsToInputs(pxW, pxH) {
   const dpi = Number(dpiInput.value) || 200;
@@ -770,6 +804,7 @@ function renderSelectedSource(srcUrl) {
 
     dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
     dropZone.style.display = 'none';
+    pickerTip.style.display = 'none';
     cropperContainerBox.style.display = 'block';
     nextPhotoBtn.style.display = 'block';
     resultStatus.style.display = 'none';
@@ -822,37 +857,42 @@ fileInput.addEventListener('change', event => {
   }
 });
 
-toggleCropBtn.addEventListener('click', () => {
+toggleCropBtn.addEventListener('click', async () => {
   if (!imageToCrop.src) return;
 
   if (!isCropMode) {
-    if (typeof Cropper === 'undefined') {
-      showMessage('Cropper लाइब्रेरी लोड नहीं हुई। इंटरनेट चेक करें।');
-      return;
-    }
+    toggleCropBtn.disabled = true;
+    toggleCropBtn.textContent = 'लोड हो रहा है...';
+    try {
+      await loadCropperAssets();
+      isCropMode = true;
+      imageToCrop.style.transform = 'none';
+      toggleCropBtn.textContent = '✖ क्रॉप बंद करें';
+      toggleCropBtn.classList.remove('active-crop');
+      lockRatioBtn.style.display = 'inline-block';
 
-    isCropMode = true;
-    imageToCrop.style.transform = 'none';
-    toggleCropBtn.textContent = '✖ क्रॉप बंद करें';
-    toggleCropBtn.classList.remove('active-crop');
-    lockRatioBtn.style.display = 'inline-block';
-
-    cropper = new Cropper(imageToCrop, {
-      viewMode: 1,
-      dragMode: 'crop',
-      autoCropArea: 0.9,
-      responsive: true,
-      background: false,
-      zoomOnWheel: false,
-      movable: false,
-      rotatable: true,
-      scalable: false,
-      ready() {
-        if (currentRotation !== 0) {
-          cropper.rotateTo(currentRotation);
+      cropper = new Cropper(imageToCrop, {
+        viewMode: 1,
+        dragMode: 'crop',
+        autoCropArea: 0.9,
+        responsive: true,
+        background: false,
+        zoomOnWheel: false,
+        movable: false,
+        rotatable: true,
+        scalable: false,
+        ready() {
+          if (currentRotation !== 0) {
+            cropper.rotateTo(currentRotation);
+          }
         }
-      }
-    });
+      });
+    } catch (e) {
+      toggleCropBtn.textContent = '✂️ क्रॉप करें (Crop)';
+      showMessage(e.message);
+    } finally {
+      toggleCropBtn.disabled = false;
+    }
   } else {
     disableCropMode();
   }
@@ -865,44 +905,4 @@ function handleRotationChange(delta) {
   } else {
     imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
   }
-  if (realPhotoWidth > 0 && realPhotoHeight > 0) {
-    const isRotated = Math.abs(currentRotation % 360) === 90 || Math.abs(currentRotation % 360) === 270;
-    applyDimensionsToInputs(
-      isRotated ? realPhotoHeight : realPhotoWidth,
-      isRotated ? realPhotoWidth : realPhotoHeight
-    );
-  }
-}
-
-document.getElementById('rotateLeftBtn').addEventListener('click', () => handleRotationChange(-90));
-document.getElementById('rotateRightBtn').addEventListener('click', () => handleRotationChange(90));
-
-lockRatioBtn.addEventListener('click', () => {
-  if (!cropper) return;
-  isRatioLocked = !isRatioLocked;
-  if (isRatioLocked) {
-    lockRatioBtn.textContent = '🔓 Free Crop';
-    updatePreviewAndRatio();
-  } else {
-    lockRatioBtn.textContent = '🔒 Ratio Lock';
-    cropper.setAspectRatio(NaN);
-  }
-});
-
-function getTargetCanvas(targetW, targetH) {
-  if (cropper && isCropMode) {
-    return cropper.getCroppedCanvas({
-      width: targetW,
-      height: targetH,
-      imageSmoothingEnabled: true,
-      imageSmoothingQuality: 'high',
-      fillColor: '#FFFFFF'
-    });
-  }
-
-  const canvas = document.createElement('canvas');
-  canvas.width = targetW;
-  canvas.height = targetH;
-  const ctx = canvas.getContext('2d');
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'h
+  if (realPhotoWidth
