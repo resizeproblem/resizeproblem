@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>ResizeProblem - Photo Resizer</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
@@ -42,11 +44,14 @@ justify-content:center;align-items:center;flex:none
 }
 .drop-zone{
 display:block;border:2px dashed var(--primary);
-border-radius:12px;padding:28px 12px;
+border-radius:12px;padding:24px 12px;
 text-align:center;background:#eff6ff;cursor:pointer
 }
 .drop-zone p{font-size:13px;color:var(--muted);margin:5px 0}
-#fileInput{display:block;width:100%;margin-top:12px}
+#fileInput{
+display:block;width:100%;margin-top:12px;
+padding:8px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;font-size:15px
+}
 .original-info{
 display:none;background:#eff6ff;border:1px solid #bfdbfe;
 border-radius:9px;padding:12px;margin-top:12px;
@@ -122,7 +127,8 @@ text-align:center;border-radius:9px
 }
 .final-preview-box img{
 max-width:100%;max-height:250px;display:block;
-margin:auto;border:1px solid var(--border)
+margin:auto;border:1px solid var(--border);
+user-select:auto;-webkit-touch-callout:default
 }
 .notice{text-align:center;margin-top:12px}
 .modal-overlay{
@@ -163,7 +169,7 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 <header class="header">
 <h1>ResizeProblem</h1>
 <p>Photo & Signature Resizer</p>
-<p>Crop • Resize • KB • MB • DPI</p>
+<p>Crop • Resize • Exact KB / MB • DPI</p>
 </header>
 
 <!-- STEP 1 -->
@@ -225,18 +231,18 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 
 <div>
 <label class="field-label" for="widthInput">Width</label>
-<input type="number" id="widthInput" value="350" min="1" step="any">
+<input type="number" id="widthInput" placeholder="Original" min="1" step="any">
 </div>
 
 <div>
 <label class="field-label" for="heightInput">Height</label>
-<input type="number" id="heightInput" value="450" min="1" step="any">
+<input type="number" id="heightInput" placeholder="Original" min="1" step="any">
 </div>
 
 </div>
 
 <div class="pixel-preview" id="pixelPreview">
-Output Size: <strong>350 × 450 px</strong>
+पहले फोटो चुनें — Original Pixels अपने-आप दिखेंगे
 </div>
 
 <div class="input-grid-2">
@@ -261,7 +267,7 @@ Output Size: <strong>350 × 450 px</strong>
 <!-- STEP 3 -->
 <div class="step-title">
 <span class="step-number">3</span>
-फोटो का KB या MB साइज सेट करें
+फोटो का Exact KB या MB साइज सेट करें
 </div>
 
 <div class="input-grid-2">
@@ -275,15 +281,14 @@ Output Size: <strong>350 × 450 px</strong>
 </div>
 
 <div>
-<label class="field-label" for="targetSize">Target File Size</label>
-<input type="number" id="targetSize" value="50" min="0.01" step="any">
+<label class="field-label" for="targetSize">Exact File Size</label>
+<input type="number" id="targetSize" value="50" min="1" step="any">
 </div>
 
 </div>
 
 <p class="notice">
-चुने गए KB या MB के बराबर या उससे छोटी फाइल बनाने की कोशिश होगी।
-साइज के अनुसार Quality और जरूरत पड़ने पर Pixels भी एडजस्ट होंगे।
+जितना KB या MB आप डालेंगे, फोटो ठीक उतने ही साइज में तैयार होकर डाउनलोड होगी।
 </p>
 
 <hr>
@@ -295,7 +300,7 @@ Output Size: <strong>350 × 450 px</strong>
 </div>
 
 <button type="button" class="btn" id="processBtn">
-फोटो तैयार करें (Resize & Compress)
+फोटो तैयार करें (Exact KB / MB JPG)
 </button>
 
 <div class="status-box" id="resultStatus">
@@ -338,7 +343,7 @@ Share / Save Image
 <div class="final-preview-box">
 <img id="finalPreviewImg" alt="Final Photo Preview">
 <div class="notice">
-फोटो को देखने के लिए Preview उपलब्ध है।
+डाउनलोड न हो तो फोटो को दबाकर रखें और Save Image चुनें।
 </div>
 </div>
 
@@ -370,6 +375,7 @@ let finalFileName = 'ResizeProblem.jpg';
 let isRatioLocked = false;
 let originalWidth = 0;
 let originalHeight = 0;
+let lastLoadedKey = '';
 
 const fileInput = $('fileInput');
 const imageToCrop = $('imageToCrop');
@@ -395,34 +401,26 @@ $('customModal').style.display = 'none';
 });
 
 function clearOutput() {
-
 if (currentObjectUrl) {
 URL.revokeObjectURL(currentObjectUrl);
 }
-
 currentObjectUrl = null;
 finalImageBlob = null;
-
 finalPreviewImg.removeAttribute('src');
 directDownloadLink.removeAttribute('href');
-
 directDownloadLink.style.pointerEvents = 'none';
 directDownloadLink.style.opacity = '.5';
-
 resultStatus.style.display = 'none';
 }
 
 function formatBytes(bytes) {
-
 if (bytes >= 1024 * 1024) {
-return (bytes / (1024 * 1024)).toFixed(3) + ' MB';
+return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
 }
-
 return (bytes / 1024).toFixed(2) + ' KB';
 }
 
 function getDimensions() {
-
 const unit = $('unitSelect').value;
 const w = Number($('widthInput').value);
 const h = Number($('heightInput').value);
@@ -442,100 +440,142 @@ let pxH = h;
 if (unit === 'cm') {
 pxW = Math.round(w / 2.54 * dpi);
 pxH = Math.round(h / 2.54 * dpi);
-}
-
-if (unit === 'mm') {
+} else if (unit === 'mm') {
 pxW = Math.round(w / 25.4 * dpi);
 pxH = Math.round(h / 25.4 * dpi);
+} else {
+pxW = Math.round(w);
+pxH = Math.round(h);
 }
 
-if (
-pxW < 1 || pxH < 1 ||
-pxW > 10000 || pxH > 10000 ||
-pxW * pxH > 40000000
-) {
+if (pxW < 1 || pxH < 1 || pxW > 10000 || pxH > 10000 || pxW * pxH > 40000000) {
 throw new Error('आउटपुट Pixels बहुत बड़े हैं।');
 }
 
-return {
-width: pxW,
-height: pxH
-};
+return { width: pxW, height: pxH };
 }
 
 function updatePixelPreview() {
-
+if (!$('widthInput').value || !$('heightInput').value) {
+$('pixelPreview').textContent = 'पहले फोटो चुनें — Original Pixels अपने-आप दिखेंगे';
+return;
+}
 try {
-
 const d = getDimensions();
-
 $('pixelPreview').innerHTML =
-'Output Size: <strong>' +
-d.width + ' × ' + d.height + ' px</strong>';
+'Output Size: <strong>' + d.width + ' × ' + d.height + ' px</strong>';
 
 if (cropper && isRatioLocked) {
 cropper.setAspectRatio(d.width / d.height);
 }
-
 } catch (e) {
-
 $('pixelPreview').textContent = e.message;
-
 }
 }
 
 $('unitSelect').addEventListener('change', () => {
-
 const u = $('unitSelect').value;
+const baseW = originalWidth || 350;
+const baseH = originalHeight || 450;
+const dpi = Number($('dpiInput').value) || 200;
 
 if (u === 'cm') {
-$('widthInput').value = '3.5';
-$('heightInput').value = '4.5';
+$('widthInput').value = ((baseW / dpi) * 2.54).toFixed(2);
+$('heightInput').value = ((baseH / dpi) * 2.54).toFixed(2);
 } else if (u === 'mm') {
-$('widthInput').value = '35';
-$('heightInput').value = '45';
+$('widthInput').value = ((baseW / dpi) * 25.4).toFixed(1);
+$('heightInput').value = ((baseH / dpi) * 25.4).toFixed(1);
 } else {
-$('widthInput').value = originalWidth || 350;
-$('heightInput').value = originalHeight || 450;
+$('widthInput').value = baseW;
+$('heightInput').value = baseH;
 }
-
 updatePixelPreview();
-
 });
 
 [$('widthInput'), $('heightInput'), $('dpiInput')].forEach(el => {
 el.addEventListener('input', updatePixelPreview);
 });
 
-// IMAGE UPLOAD
+function initCropperWithSource(srcUrl, file) {
+cropperContainerBox.style.display = 'block';
+$('originalInfo').style.display = 'block';
 
-fileInput.addEventListener('change', event => {
+imageToCrop.onload = () => {
+originalWidth = imageToCrop.naturalWidth;
+originalHeight = imageToCrop.naturalHeight;
 
-const file = event.target.files && event.target.files[0];
+$('unitSelect').value = 'px';
+$('widthInput').value = originalWidth;
+$('heightInput').value = originalHeight;
 
+$('originalDimensions').textContent =
+originalWidth + ' × ' + originalHeight + ' Pixels';
+
+$('originalFileSize').textContent =
+'Original File Size: ' + formatBytes(file.size);
+
+isRatioLocked = false;
+$('lockRatioBtn').textContent = 'Ratio Lock';
+updatePixelPreview();
+
+if (typeof Cropper === 'undefined') {
+$('nextPhotoBtn').style.display = 'block';
+return;
+}
+
+try {
+cropper = new Cropper(imageToCrop, {
+viewMode: 1,
+dragMode: 'crop',
+autoCropArea: 0.9,
+responsive: true,
+background: false,
+zoomOnWheel: false,
+movable: true,
+rotatable: true,
+scalable: false,
+aspectRatio: NaN,
+ready() {
+$('nextPhotoBtn').style.display = 'block';
+}
+});
+} catch (err) {
+$('nextPhotoBtn').style.display = 'block';
+}
+};
+
+imageToCrop.onerror = () => {
+const reader = new FileReader();
+reader.onload = () => {
+imageToCrop.onerror = () => showMessage('फोटो पढ़ने में समस्या हुई। दूसरी JPG/PNG फोटो चुनें।');
+imageToCrop.src = reader.result;
+};
+reader.onerror = () => showMessage('फोटो पढ़ने में समस्या हुई। दूसरी फोटो चुनें।');
+reader.readAsDataURL(file);
+};
+
+imageToCrop.src = srcUrl;
+}
+
+function handleSelectedFile(file) {
 if (!file) return;
 
-if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
+const fileKey = file.name + '_' + file.size + '_' + file.lastModified;
+if (fileKey === lastLoadedKey && imageToCrop.src) return;
+lastLoadedKey = fileKey;
 
+if (file.type && !['image/jpeg','image/png','image/webp'].includes(file.type)) {
 showMessage('कृपया JPG, PNG या WebP फोटो चुनें।');
 fileInput.value = '';
+lastLoadedKey = '';
 return;
-
 }
 
 if (file.size > 100 * 1024 * 1024) {
-
 showMessage('फोटो 100 MB से छोटी चुनें।');
 fileInput.value = '';
+lastLoadedKey = '';
 return;
-
-}
-
-if (typeof Cropper === 'undefined') {
-
-showMessage('Cropper लाइब्रेरी लोड नहीं हुई। इंटरनेट चालू करें और पेज Refresh करें।');
-return;
-
 }
 
 if (cropper) {
@@ -547,72 +587,31 @@ clearOutput();
 
 if (originalObjectUrl) {
 URL.revokeObjectURL(originalObjectUrl);
+originalObjectUrl = null;
 }
-
-originalObjectUrl = URL.createObjectURL(file);
-
-cropperContainerBox.style.display = 'block';
-$('originalInfo').style.display = 'block';
-
-imageToCrop.onload = () => {
-
-originalWidth = imageToCrop.naturalWidth;
-originalHeight = imageToCrop.naturalHeight;
-
-// Original pixels automatically fill
-$('widthInput').value = originalWidth;
-$('heightInput').value = originalHeight;
-$('unitSelect').value = 'px';
-
-$('originalDimensions').textContent =
-originalWidth + ' × ' + originalHeight + ' Pixels';
-
-$('originalFileSize').textContent =
-'Original File Size: ' + formatBytes(file.size);
-
-isRatioLocked = false;
-$('lockRatioBtn').textContent = 'Ratio Lock';
 
 try {
-
-cropper = new Cropper(imageToCrop, {
-
-viewMode: 1,
-dragMode: 'crop',
-autoCropArea: 0.9,
-responsive: true,
-background: false,
-zoomOnWheel: false,
-movable: true,
-rotatable: true,
-scalable: false,
-aspectRatio: NaN,
-
-ready() {
-$('nextPhotoBtn').style.display = 'block';
-updatePixelPreview();
+originalObjectUrl = URL.createObjectURL(file);
+initCropperWithSource(originalObjectUrl, file);
+} catch (e) {
+const reader = new FileReader();
+reader.onload = () => initCropperWithSource(reader.result, file);
+reader.readAsDataURL(file);
+}
 }
 
+fileInput.addEventListener('change', event => {
+const file = event.target.files && event.target.files[0];
+handleSelectedFile(file);
 });
 
-} catch (err) {
-
-showMessage('Cropper शुरू नहीं हुआ: ' + err.message);
-
+window.addEventListener('pageshow', () => {
+if (fileInput.files && fileInput.files[0]) {
+handleSelectedFile(fileInput.files[0]);
 }
-
-};
-
-imageToCrop.onerror = () => {
-showMessage('फोटो पढ़ने में समस्या हुई। दूसरी फोटो चुनें।');
-};
-
-imageToCrop.src = originalObjectUrl;
-
 });
 
 // CROP BUTTONS
-
 $('rotateLeftBtn').addEventListener('click', () => {
 if (cropper) cropper.rotate(-90);
 });
@@ -622,122 +621,75 @@ if (cropper) cropper.rotate(90);
 });
 
 $('freeCropBtn').addEventListener('click', () => {
-
 if (!cropper) return;
-
 isRatioLocked = false;
 cropper.setAspectRatio(NaN);
 $('lockRatioBtn').textContent = 'Ratio Lock';
-
 });
 
 $('lockRatioBtn').addEventListener('click', () => {
-
 if (!cropper) return;
-
 isRatioLocked = !isRatioLocked;
-
 if (isRatioLocked) {
-
 try {
-
 const d = getDimensions();
 cropper.setAspectRatio(d.width / d.height);
 $('lockRatioBtn').textContent = 'Ratio Unlock';
-
 } catch (e) {
-
 isRatioLocked = false;
 showMessage(e.message);
-
 }
-
 } else {
-
 cropper.setAspectRatio(NaN);
 $('lockRatioBtn').textContent = 'Ratio Lock';
-
 }
-
 });
 
 // JPEG CONVERSION
-
 function canvasToBlob(canvas, quality) {
-
 return new Promise((resolve, reject) => {
-
 canvas.toBlob(blob => {
-
-if (blob) {
-resolve(blob);
-} else {
-reject(new Error('JPEG बनाने में समस्या हुई।'));
-}
-
+if (blob) resolve(blob);
+else reject(new Error('JPEG बनाने में समस्या हुई।'));
 }, 'image/jpeg', quality);
-
 });
-
 }
 
 function getQualities() {
-
 const mode = $('qualityInput').value;
-
-if (mode === 'high') {
-return [0.95,0.90,0.85,0.80,0.75,0.70,0.65];
-}
-
-if (mode === 'medium') {
-return [0.80,0.75,0.70,0.65,0.60,0.55,0.50,0.45];
-}
-
-if (mode === 'low') {
-return [0.55,0.50,0.45,0.40,0.35,0.30,0.25,0.20,0.15,0.10];
-}
-
+if (mode === 'high') return [0.98,0.94,0.90,0.85,0.80,0.75,0.70,0.65];
+if (mode === 'medium') return [0.82,0.76,0.70,0.65,0.60,0.55,0.50,0.45];
+if (mode === 'low') return [0.55,0.48,0.42,0.36,0.30,0.24,0.18,0.12,0.06];
 return [
-0.95,0.90,0.85,0.80,0.75,0.70,0.65,
-0.60,0.55,0.50,0.45,0.40,0.35,0.30,
-0.25,0.20,0.15,0.10,0.05,0.02
+0.98,0.95,0.92,0.88,0.84,0.80,0.75,0.70,0.65,
+0.60,0.55,0.50,0.45,0.40,0.35,0.30,0.25,0.20,
+0.15,0.10,0.06,0.03
 ];
-
 }
 
 function getTargetBytes() {
-
 const value = Number($('targetSize').value);
-
 if (!Number.isFinite(value) || value <= 0) {
-throw new Error('Target File Size सही भरें।');
+throw new Error('Exact File Size सही भरें।');
 }
-
 const unit = $('sizeUnit').value;
-
 const bytes = unit === 'MB'
-? value * 1024 * 1024
-: value * 1024;
+? Math.round(value * 1024 * 1024)
+: Math.round(value * 1024);
 
-if (!Number.isFinite(bytes) || bytes < 1) {
-throw new Error('File Size सही भरें।');
+if (!Number.isFinite(bytes) || bytes < 1024 || bytes > 50 * 1024 * 1024) {
+throw new Error('File Size 1 KB से 50 MB के बीच रखें।');
 }
-
 return bytes;
-
 }
 
 async function addJfifDpi(blob, dpi) {
-
 const buffer = await blob.arrayBuffer();
 const view = new DataView(buffer);
-
 if (buffer.byteLength < 4 || view.getUint16(0) !== 0xFFD8) {
 throw new Error('JPEG डेटा सही नहीं है।');
 }
-
 const d = Math.max(1, Math.min(65535, Math.round(dpi)));
-
 const app0 = new Uint8Array([
 0xFF,0xE0,0x00,0x10,
 0x4A,0x46,0x49,0x46,0x00,
@@ -746,138 +698,96 @@ const app0 = new Uint8Array([
 (d>>8)&255,d&255,
 0,0
 ]);
-
 let offset = 2;
-
 if (view.getUint16(2) === 0xFFE0) {
-
 const len = view.getUint16(4);
-
 if (len >= 2 && 4 + len <= buffer.byteLength) {
 offset = 4 + len;
 }
-
 }
-
 const out = new Uint8Array(2 + app0.length + buffer.byteLength - offset);
-
 out.set([0xFF,0xD8],0);
 out.set(app0,2);
 out.set(new Uint8Array(buffer,offset),2+app0.length);
-
 return new Blob([out],{type:'image/jpeg'});
-
 }
 
-// AUTO RESIZE AND COMPRESS
+async function padBlobToExactBytes(blob, targetBytes) {
+if (blob.size >= targetBytes) return blob;
+const buf = await blob.arrayBuffer();
+const src = new Uint8Array(buf);
+const exact = new Uint8Array(targetBytes);
+exact.set(src, 0);
+return new Blob([exact], { type: 'image/jpeg' });
+}
 
-async function compressImage(sourceCanvas, targetBytes) {
-
+// EXACT SIZE COMPRESSION (KEEPING CHOSEN PIXELS)
+async function compressToExactSize(sourceCanvas, targetBytes) {
 const qualities = getQualities();
+let bestUnder = null;
+let smallest = null;
 
-let bestBlob = null;
-let bestCanvas = null;
-
-let scale = 1;
-
-for (let attempt = 0; attempt < 35; attempt++) {
-
-const width = Math.max(1, Math.round(sourceCanvas.width * scale));
-const height = Math.max(1, Math.round(sourceCanvas.height * scale));
-
-const canvas = document.createElement('canvas');
-canvas.width = width;
-canvas.height = height;
-
-const ctx = canvas.getContext('2d', {alpha:false});
-
-ctx.fillStyle = '#FFFFFF';
-ctx.fillRect(0,0,width,height);
-
-ctx.imageSmoothingEnabled = true;
-ctx.imageSmoothingQuality = 'high';
-
-ctx.drawImage(sourceCanvas,0,0,width,height);
-
-for (const quality of qualities) {
-
-const blob = await canvasToBlob(canvas,quality);
-
-if (!bestBlob || blob.size < bestBlob.size) {
-bestBlob = blob;
-bestCanvas = {width,height};
+for (const q of qualities) {
+const blob = await canvasToBlob(sourceCanvas, q);
+if (!smallest || blob.size < smallest.size) {
+smallest = blob;
+}
+if (blob.size <= targetBytes - 32) {
+bestUnder = blob;
+break;
+}
 }
 
-if (blob.size <= targetBytes) {
-
-return {
-blob,
-width,
-height,
-metTarget:true
-};
-
+if (bestUnder) {
+return { blob: bestUnder, metTarget: true };
 }
-
-}
-
-// If target not reached, reduce dimensions automatically.
-scale *= 0.85;
-
-if (width <= 16 || height <= 16) break;
-
-}
-
-return {
-blob:bestBlob,
-width:bestCanvas.width,
-height:bestCanvas.height,
-metTarget:false
-};
-
+return { blob: smallest, metTarget: false };
 }
 
 // PROCESS BUTTON
-
 processBtn.addEventListener('click', async () => {
-
-if (!cropper || !imageToCrop.complete || !imageToCrop.naturalWidth) {
-
-showMessage('पहले फोटो चुनें और Cropper में लोड होने दें।');
+if (!imageToCrop.complete || !imageToCrop.naturalWidth) {
+showMessage('पहले फोटो चुनें और बॉक्स में लोड होने दें।');
 return;
-
 }
 
 processBtn.disabled = true;
 processBtn.textContent = 'फोटो तैयार हो रही है...';
 
 try {
-
 const d = getDimensions();
 const targetBytes = getTargetBytes();
 const dpi = Number($('dpiInput').value);
 
-const sourceCanvas = cropper.getCroppedCanvas({
-
-width:d.width,
-height:d.height,
-fillColor:'#FFFFFF',
-imageSmoothingEnabled:true,
-imageSmoothingQuality:'high'
-
+let sourceCanvas = null;
+if (cropper) {
+sourceCanvas = cropper.getCroppedCanvas({
+width: d.width,
+height: d.height,
+fillColor: '#FFFFFF',
+imageSmoothingEnabled: true,
+imageSmoothingQuality: 'high'
 });
+} else {
+sourceCanvas = document.createElement('canvas');
+sourceCanvas.width = d.width;
+sourceCanvas.height = d.height;
+const ctx = sourceCanvas.getContext('2d', { alpha: false });
+ctx.fillStyle = '#FFFFFF';
+ctx.fillRect(0, 0, d.width, d.height);
+ctx.drawImage(imageToCrop, 0, 0, d.width, d.height);
+}
 
 if (!sourceCanvas) {
-throw new Error('Crop Canvas तैयार नहीं हो सका।');
+throw new Error('Canvas तैयार नहीं हो सका।');
 }
 
-const compressed = await compressImage(sourceCanvas,targetBytes);
+const compressed = await compressToExactSize(sourceCanvas, targetBytes);
+let finalBlob = await addJfifDpi(compressed.blob, dpi);
 
-if (!compressed.blob) {
-throw new Error('फोटो Compress नहीं हो सकी।');
+if (finalBlob.size < targetBytes) {
+finalBlob = await padBlobToExactBytes(finalBlob, targetBytes);
 }
-
-const finalBlob = await addJfifDpi(compressed.blob,dpi);
 
 clearOutput();
 
@@ -886,32 +796,102 @@ currentObjectUrl = URL.createObjectURL(finalBlob);
 
 finalFileName =
 'ResizeProblem_' +
-compressed.width + 'x' +
-compressed.height + '_' +
+d.width + 'x' + d.height + '_' +
+$('targetSize').value + $('sizeUnit').value + '_' +
 dpi + 'dpi.jpg';
 
 directDownloadLink.href = currentObjectUrl;
 directDownloadLink.download = finalFileName;
 directDownloadLink.style.pointerEvents = 'auto';
 directDownloadLink.style.opacity = '1';
-directDownloadLink.setAttribute('aria-disabled','false');
 
 finalPreviewImg.src = currentObjectUrl;
 
-$('outDims').textContent =
-compressed.width + ' × ' + compressed.height + ' px';
-
+$('outDims').textContent = d.width + ' × ' + d.height + ' px';
 $('outSize').textContent = formatBytes(finalBlob.size);
-
 $('outDPI').textContent = dpi + ' DPI';
 
-const success = compressed.metTarget &&
-finalBlob.size <= targetBytes;
+const exactMatch = finalBlob.size === targetBytes;
 
-$('statusHeader').textContent = success
-? '✓ आपकी फोटो तैयार है!'
-: '✓ फोटो तैयार है, लेकिन Target Size पूरा नहीं हुआ।';
+$('statusHeader').textContent = exactMatch
+? '✓ आपकी फोटो ठीक ' + formatBytes(finalBlob.size) + ' में तैयार है!'
+: '✓ फोटो तैयार है (न्यूनतम संभव साइज)।';
 
-$('resultNote').textContent = success
-? 'आपकी फोटो चुने गए File Size के अंदर तैयार है।'
-: 'फोटो की सबसे छोटी उपलब्ध फाइल तैयार की 
+$('resultNote').textContent = exactMatch
+? 'फोटो आपके चुने गए Exact File Size (' + finalBlob.size + ' Bytes) में तैयार है।'
+: 'पिक्सल अधिक होने के कारण इससे छोटी फाइल संभव नहीं है।';
+
+resultStatus.style.display = 'block';
+resultStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+} catch (err) {
+console.error(err);
+showMessage(err.message || 'फोटो तैयार करने में समस्या हुई।');
+} finally {
+processBtn.disabled = false;
+processBtn.textContent = 'फोटो तैयार करें (Exact KB / MB JPG)';
+}
+});
+
+// DOWNLOAD
+directDownloadLink.addEventListener('click', event => {
+if (!finalImageBlob || !currentObjectUrl) {
+event.preventDefault();
+showMessage('पहले फोटो तैयार करें।');
+}
+});
+
+// SHARE
+$('shareDownloadBtn').addEventListener('click', async () => {
+if (!finalImageBlob) {
+showMessage('पहले फोटो तैयार करें।');
+return;
+}
+
+try {
+const file = new File([finalImageBlob], finalFileName, { type: 'image/jpeg' });
+if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+await navigator.share({ files: [file], title: 'ResizeProblem Photo' });
+} else {
+const tab = window.open(currentObjectUrl, '_blank');
+if (!tab) {
+showMessage('Popup ब्लॉक हुआ। DOWNLOAD JPG बटन दबाएं।');
+} else {
+showMessage('फोटो नए टैब में खुल गई है। वहाँ फोटो को दबाकर रखें और Save Image चुनें।');
+}
+}
+} catch (err) {
+if (err.name !== 'AbortError') {
+showMessage('Share नहीं हो सका। Download JPG बटन से डाउनलोड करें।');
+}
+}
+});
+
+// NEXT PHOTO
+$('nextPhotoBtn').addEventListener('click', () => {
+if (cropper) {
+cropper.destroy();
+cropper = null;
+}
+clearOutput();
+imageToCrop.removeAttribute('src');
+cropperContainerBox.style.display = 'none';
+$('originalInfo').style.display = 'none';
+$('nextPhotoBtn').style.display = 'none';
+originalWidth = 0;
+originalHeight = 0;
+lastLoadedKey = '';
+fileInput.value = '';
+fileInput.click();
+});
+
+window.addEventListener('beforeunload', () => {
+if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+if (originalObjectUrl) URL.revokeObjectURL(originalObjectUrl);
+});
+
+updatePixelPreview();
+</script>
+</body>
+</html>
+```
