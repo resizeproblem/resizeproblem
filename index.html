@@ -99,7 +99,7 @@ body {
 
 .visible-file-btn {
   display:inline-block;
-  margin-top:10px;
+  margin-top:12px;
   background:var(--primary);
   color:#ffffff;
   padding:12px 22px;
@@ -109,12 +109,15 @@ body {
 }
 
 .native-file-input {
-  width:0.1px;
-  height:0.1px;
-  opacity:0;
-  overflow:hidden;
-  position:absolute;
-  z-index:-1;
+  display:block;
+  width:100%;
+  margin-top:12px;
+  padding:8px;
+  font-size:13px;
+  color:var(--muted);
+  background:#ffffff;
+  border:1px solid var(--border);
+  border-radius:8px;
 }
 
 .cropper-container-box {
@@ -421,18 +424,20 @@ input:focus {
   फोटो अपलोड करें (ज़रूरत हो तो Crop करें)
 </div>
 
-<input type="file"
-  id="fileInput"
-  class="native-file-input"
-  accept="image/*">
+<div id="uploadSection">
+  <label class="drop-zone" for="fileInput">
+    <div style="font-size:38px;color:#2563eb">⬆</div>
+    <strong id="dropZoneText">यहाँ क्लिक करके फोटो चुनें</strong>
+    <p>JPG, PNG, WebP सपोर्ट</p>
+    <p>फोटो आपके डिवाइस में ही प्रोसेस होगी।</p>
+    <span class="visible-file-btn">📁 गैलरी / फाइल से फोटो चुनें</span>
+  </label>
 
-<label class="drop-zone" id="dropZone" for="fileInput">
-  <div style="font-size:38px;color:#2563eb;">⬆</div>
-  <strong id="dropZoneText">यहाँ क्लिक करके फोटो चुनें</strong>
-  <p>JPG, PNG, WebP सपोर्ट</p>
-  <p>फोटो आपके डिवाइस में ही प्रोसेस होगी।</p>
-  <span class="visible-file-btn">📁 गैलरी / फाइल से फोटो चुनें</span>
-</label>
+  <input type="file"
+    id="fileInput"
+    class="native-file-input"
+    accept="image/*">
+</div>
 
 <div class="cropper-container-box" id="cropperContainerBox">
 
@@ -632,7 +637,7 @@ let finalImageBlob = null;
 let finalFileName = 'ResizeProblem.jpg';
 
 const fileInput = document.getElementById('fileInput');
-const dropZone = document.getElementById('dropZone');
+const uploadSection = document.getElementById('uploadSection');
 const dropZoneText = document.getElementById('dropZoneText');
 const cropperContainerBox = document.getElementById('cropperContainerBox');
 const imageToCrop = document.getElementById('imageToCrop');
@@ -773,16 +778,38 @@ function disableCropMode() {
   imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
 }
 
-function renderSelectedSource(srcData) {
+// Direct, simple & reliable file input change handler
+fileInput.addEventListener('change', function(event) {
+  const file = event.target.files && event.target.files[0];
+
+  if (!file) {
+    showMessage('Photo select nahi hui!');
+    return;
+  }
+
+  if (file.type && !file.type.startsWith('image/')) {
+    showMessage('Please image file select karein.');
+    return;
+  }
+
+  dropZoneText.textContent = 'फोटो लोड हो रही है...';
+  currentRotation = 0;
+  disableCropMode();
+
+  const imageURL = URL.createObjectURL(file);
+
   imageToCrop.onload = function() {
+    URL.revokeObjectURL(imageURL);
+
     realPhotoWidth = imageToCrop.naturalWidth || 350;
     realPhotoHeight = imageToCrop.naturalHeight || 450;
 
     applyDimensionsToInputs(realPhotoWidth, realPhotoHeight);
 
     dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
-    dropZone.style.display = 'none';
+    uploadSection.style.display = 'none';
     cropperContainerBox.style.display = 'block';
+    imageToCrop.style.display = 'block';
     nextPhotoBtn.style.display = 'block';
     resultStatus.style.display = 'none';
     finalImageBlob = null;
@@ -793,37 +820,13 @@ function renderSelectedSource(srcData) {
   };
 
   imageToCrop.onerror = function() {
+    URL.revokeObjectURL(imageURL);
     dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
-    showMessage('फोटो स्क्रीन पर लोड नहीं हो सकी। कृपया दूसरी फोटो चुनें।');
+    showMessage('Photo load nahi ho paayi. Kripya JPG ya PNG photo chunein.');
   };
 
   imageToCrop.style.transform = 'rotate(0deg)';
-  imageToCrop.src = srcData;
-}
-
-function handleSelectedFile(file) {
-  if (!file) return;
-
-  dropZoneText.textContent = 'फोटो लोड हो रही है...';
-  currentRotation = 0;
-  disableCropMode();
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    renderSelectedSource(e.target.result);
-  };
-  reader.onerror = function() {
-    dropZoneText.textContent = 'यहाँ क्लिक करके फोटो चुनें';
-    showMessage('फोटो लोड नहीं हो सकी। कृपया दूसरी फोटो चुनें।');
-  };
-  reader.readAsDataURL(file);
-}
-
-fileInput.addEventListener('change', event => {
-  const file = event.target.files && event.target.files[0];
-  if (file) {
-    handleSelectedFile(file);
-  }
+  imageToCrop.src = imageURL;
 });
 
 toggleCropBtn.addEventListener('click', async () => {
@@ -898,7 +901,4 @@ lockRatioBtn.addEventListener('click', () => {
   }
 });
 
-function getTargetCanvas(targetW, targetH) {
-  if (cropper && isCropMode) {
-    return cropper.getCroppedCanvas({
-    
+function getTarget
