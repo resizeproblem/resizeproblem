@@ -19,7 +19,7 @@ body{margin:0;padding:12px;background:var(--bg);color:var(--text);font-family:Ar
 .step-number{background:var(--primary);color:#fff;width:26px;height:26px;border-radius:50%;display:inline-flex;justify-content:center;align-items:center;flex:none}
 .drop-zone{display:block;position:relative;border:2px dashed var(--primary);border-radius:12px;padding:28px 12px;text-align:center;background:#eff6ff;cursor:pointer}
 .drop-zone p{font-size:13px;color:var(--muted);margin:5px 0}
-#fileInput{display:block;width:100%;margin-top:12px}
+#fileInput{display:block;width:100%;margin-top:12px;font-size:15px}
 .cropper-container-box{display:none;margin-top:12px}
 .cropper-wrapper{position:relative;width:100%;height:360px;overflow:hidden;background:#0f172a;border-radius:10px;display:flex;align-items:center;justify-content:center}
 .cropper-wrapper img{display:block;max-width:100%;max-height:360px}
@@ -131,6 +131,8 @@ let isRatioLocked = false;
 let currentRotation = 0;
 let originalWidth = 0;
 let originalHeight = 0;
+let lastLoadedSignature = '';
+let sourceObjectUrl = null;
 let currentObjectUrl = null;
 let finalImageBlob = null;
 let finalFileName = 'ResizeProblem.jpg';
@@ -275,36 +277,80 @@ toggleCropBtn.addEventListener('click', () => {
   }
 });
 
-fileInput.addEventListener('change', event => {
-  const file = event.target.files && event.target.files[0];
+function loadSelectedFile(file) {
   if (!file) return;
-  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
-    showMessage('कृपया JPG, PNG या WebP फोटो चुनें।'); fileInput.value = ''; return;
-  }
-  if (file.size > 30 * 1024 * 1024) {
-    showMessage('कृपया 30 MB से छोटी फोटो चुनें।'); fileInput.value = ''; return;
+  const sig = `${file.name}_${file.size}_${file.lastModified}`;
+  if (sig === lastLoadedSignature && imageToCrop.src && cropperContainerBox.style.display === 'block') {
+    return;
   }
 
+  if (!['image/jpeg','image/png','image/webp'].includes(file.type) && !file.type.startsWith('image/')) {
+    showMessage('कृपया JPG, PNG या WebP फोटो चुनें।');
+    fileInput.value = '';
+    return;
+  }
+  if (file.size > 30 * 1024 * 1024) {
+    showMessage('कृपया 30 MB से छोटी फोटो चुनें।');
+    fileInput.value = '';
+    return;
+  }
+
+  lastLoadedSignature = sig;
   currentRotation = 0;
   stopCropMode();
   clearOutput();
   cropperContainerBox.style.display = 'block';
 
-  const reader = new FileReader();
-  reader.onerror = () => showMessage('फोटो पढ़ने में समस्या हुई। दोबारा चुनें।');
-  reader.onload = () => {
-    imageToCrop.onload = () => {
-      originalWidth = imageToCrop.naturalWidth;
-      originalHeight = imageToCrop.naturalHeight;
-      setInputsFromOriginalPixels(originalWidth, originalHeight);
-      $('nextPhotoBtn').style.display = 'block';
-    };
-    imageToCrop.onerror = () => showMessage('फोटो दिखाई नहीं दे रही। दूसरी JPG/PNG फोटो आजमाएं।');
-    imageToCrop.style.transform = 'rotate(0deg)';
-    imageToCrop.src = reader.result;
+  if (sourceObjectUrl) {
+    URL.revokeObjectURL(sourceObjectUrl);
+    sourceObjectUrl = null;
+  }
+
+  const onImageReady = () => {
+    cropperContainerBox.style.display = 'block';
+    originalWidth = imageToCrop.naturalWidth;
+    originalHeight = imageToCrop.naturalHeight;
+    setInputsFromOriginalPixels(originalWidth, originalHeight);
+    $('nextPhotoBtn').style.display = 'block';
   };
-  reader.readAsDataURL(file);
+
+  sourceObjectUrl = URL.createObjectURL(file);
+  imageToCrop.onload = onImageReady;
+  imageToCrop.onerror = () => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      imageToCrop.onload = onImageReady;
+      imageToCrop.src = reader.result;
+    };
+    reader.onerror = () => showMessage('फोटो दिखाई नहीं दे रही। दूसरी JPG/PNG फोटो आजमाएं।');
+    reader.readAsDataURL(file);
+  };
+  imageToCrop.style.transform = 'rotate(0deg)';
+  imageToCrop.src = sourceObjectUrl;
+}
+
+fileInput.addEventListener('change', event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) loadSelectedFile(file);
 });
+
+fileInput.addEventListener('input', event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) loadSelectedFile(file);
+});
+
+// Auto-recover if Android Chrome restored the file input after tab suspension
+function checkRestoredFile() {
+  if (fileInput.files && fileInput.files[0]) {
+    loadSelectedFile(fileInput.files[0]);
+  }
+}
+window.addEventListener('pageshow', checkRestoredFile);
+window.addEventListener('focus', checkRestoredFile);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) checkRestoredFile();
+});
+setInterval(checkRestoredFile, 700);
 
 function rotateImage(delta) {
   currentRotation = (currentRotation + delta) % 360;
@@ -408,31 +454,4 @@ async function padBlobToExactBytes(blob, targetBytes) {
   return new Blob([exact], { type: 'image/jpeg' });
 }
 
-async function addJfifDpi(blob, dpi) {
-  const buffer = await blob.arrayBuffer();
-  const view = new DataView(buffer);
-  if (buffer.byteLength < 4 || view.getUint16(0) !== 0xFFD8) throw new Error('JPEG डेटा सही नहीं है।');
-  const d = Math.max(1, Math.min(65535, Math.round(dpi)));
-  const app0 = new Uint8Array([0xFF,0xE0,0x00,0x10,0x4A,0x46,0x49,0x46,0x00,0x01,0x01,0x01,(d>>8)&255,d&255,(d>>8)&255,d&255,0,0]);
-  let offset = 2;
-  if (buffer.byteLength >= 6 && view.getUint16(2) === 0xFFE0) {
-    const len = view.getUint16(4);
-    if (len >= 2 && 4 + len <= buffer.byteLength) offset = 4 + len;
-  }
-  const out = new Uint8Array(2 + app0.length + buffer.byteLength - offset);
-  out.set([0xFF,0xD8],0); out.set(app0,2);
-  out.set(new Uint8Array(buffer,offset),2+app0.length);
-  return new Blob([out],{type:'image/jpeg'});
-}
-
-processBtn.addEventListener('click', async () => {
-  if (!imageToCrop.src || !imageToCrop.complete || !imageToCrop.naturalWidth) {
-    showMessage('पहले फोटो चुनें और उसके लोड होने दें।'); return;
-  }
-  processBtn.disabled = true;
-  processBtn.textContent = 'फोटो तैयार हो रही है...';
-  try {
-    const d = getDimensions();
-    const sizeVal = Number($('kbInput').value);
-    const sizeUnit = $('sizeUnitSelect').value;
-    const dpi = Number($('dpiInput')
+async func
