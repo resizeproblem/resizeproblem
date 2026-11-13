@@ -2,369 +2,210 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2563eb">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="logo.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-
-<title>ResizeProblem - Free Photo & Signature Resizer (Exact KB, MB & DPI)</title>
-<meta name="description" content="ResizeProblem is a free online photo and signature resizer tool for SSC, UPSC, Railway, IBPS, and PAN card forms. Resize images to exact KB, MB, pixels (px, cm, mm), and 200/300 DPI online on mobile.">
-<meta name="keywords" content="photo resizer 50kb, signature resizer 20kb, ssc photo resizer, upsc photo dpi converter, image compressor exact kb mb, resizeproblem">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://resizeproblem.github.io/resizeproblem/">
-
-<meta property="og:title" content="ResizeProblem - Online Photo & Signature Resizer (KB/MB & DPI)">
-<meta property="og:description" content="मोबाइल से सरकारी फॉर्म (SSC, UPSC, Railway) के लिए फोटो और सिग्नेचर को ठीक KB/MB और 200/300 DPI में बनाएं।">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://resizeproblem.github.io/resizeproblem/">
-<meta property="og:image" content="https://resizeproblem.github.io/resizeproblem/logo.png">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
-
+<meta name="description" content="मोबाइल पर फोटो और सिग्नेचर को crop, resize और compress करें।">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<title>ResizeProblem – Photo Resizer</title>
 <style>
-:root{--primary:#2563eb;--success:#059669;--bg:#f1f5f9;--text:#0f172a;--muted:#64748b;--border:#cbd5e1}
-*{box-sizing:border-box}
-body{margin:0;padding:12px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;line-height:1.6}
-.container{max-width:650px;margin:10px auto}
-.card{background:white;padding:20px;border-radius:16px;box-shadow:0 4px 15px #00000012;margin-bottom:18px}
-.header{text-align:center;margin-bottom:16px}
-.header h1{margin:0;color:var(--primary);font-size:28px}
-.header p,.notice{font-size:13px;color:var(--muted)}
-.app-banner{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:white;border-radius:12px;padding:12px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.app-banner-left{display:flex;align-items:center;gap:10px;text-align:left}
-.app-banner-left img{width:42px;height:42px;border-radius:10px;background:white;object-fit:cover;flex:none}
-.app-banner-title{font-weight:bold;font-size:14px;line-height:1.2}
-.app-banner-sub{font-size:11px;opacity:.9;margin-top:2px}
-.app-install-btn{background:#10b981;color:white;border:0;padding:9px 13px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;white-space:nowrap;flex:none}
-.step-title{font-weight:bold;margin:18px 0 12px;display:flex;align-items:center;gap:8px}
-.step-number{background:var(--primary);color:white;width:26px;height:26px;border-radius:50%;display:inline-flex;justify-content:center;align-items:center;flex:none}
-.drop-zone{display:block;border:2px dashed var(--primary);border-radius:12px;padding:22px 12px;text-align:center;background:#eff6ff;cursor:pointer}
-.drop-zone p{font-size:13px;color:var(--muted);margin:5px 0}
-#fileInput{display:block;width:100%;margin-top:12px;padding:8px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;font-size:15px}
-.original-info{display:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:12px;margin-top:12px;font-size:13px;text-align:center}
-.cropper-container-box{display:none;margin-top:12px}
-.cropper-wrapper{position:relative;width:100%;min-height:220px;max-height:360px;overflow:hidden;background:#0f172a;border-radius:10px;display:flex;align-items:center;justify-content:center}
-.cropper-wrapper img{display:block;max-width:100%;max-height:360px;margin:auto;pointer-events:none;user-select:none;-webkit-user-select:none}
-.crop-tools{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:10px}
-.tool-btn{border:0;background:#e2e8f0;color:var(--text);padding:10px 12px;border-radius:7px;font-weight:bold;cursor:pointer}
-.tool-btn.active-btn{background:var(--primary);color:white}
-hr{border:0;border-top:1px solid var(--border);margin:20px 0}
-.input-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.input-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.field-label{display:block;font-size:13px;font-weight:bold;margin-bottom:5px}
-select,input[type=number]{width:100%;padding:11px 8px;border:2px solid var(--border);border-radius:8px;font-size:16px;background:white;color:var(--text)}
-.pixel-preview{background:#f8fafc;border:1px solid #e2e8f0;padding:10px;border-radius:7px;text-align:center;font-size:13px;margin:10px 0 13px}
-.btn{width:100%;padding:14px;border:0;border-radius:9px;background:var(--primary);color:white;font-size:16px;font-weight:bold;cursor:pointer;margin-top:12px}
-.btn:disabled{background:#94a3b8;cursor:wait}
-.btn-download{display:block;background:var(--success);color:white;text-decoration:none;text-align:center;padding:15px;font-size:17px;font-weight:bold;border-radius:9px;margin-top:15px}
-.btn-share{background:#0f766e}
-.btn-next{width:100%;padding:13px;border:0;border-radius:9px;margin-top:12px;background:#e2e8f0;color:var(--text);font-weight:bold;font-size:15px;cursor:pointer}
-.status-box{display:none;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:14px;margin-top:16px}
-.status-header{text-align:center;color:#065f46;font-weight:bold;margin-bottom:12px}
-.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.status-item{background:white;border:1px solid #d1fae5;border-radius:7px;padding:8px 4px;text-align:center;font-size:11px;overflow-wrap:anywhere}
-.status-item strong{display:block;font-size:13px;margin-top:4px}
-.final-preview-box{margin-top:12px;padding:12px;background:white;text-align:center;border-radius:9px}
-.final-preview-box img{max-width:100%;max-height:250px;display:block;margin:auto;border:1px solid var(--border);user-select:auto;-webkit-touch-callout:default}
-.notice{text-align:center;margin-top:12px}
-.seo-section h2{font-size:19px;color:var(--primary);margin:0 0 10px 0}
-.seo-section h3{font-size:16px;color:var(--text);margin:16px 0 6px 0}
-.seo-section p,.seo-section li{font-size:14px;color:#334155;margin-bottom:8px}
-.seo-section ul{padding-left:20px;margin:8px 0}
-.exam-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
-.exam-table th,.exam-table td{border:1px solid var(--border);padding:8px;text-align:left}
-.exam-table th{background:#eff6ff;color:var(--text)}
-.faq-item{border-bottom:1px solid #e2e8f0;padding:10px 0}
-.faq-item:last-child{border-bottom:0}
-.faq-q{font-weight:bold;font-size:14px;color:var(--text);margin-bottom:4px}
-.faq-a{font-size:13px;color:#475569}
-.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
-.footer-link-btn{background:none;border:0;color:var(--primary);font-size:13px;font-weight:bold;cursor:pointer;text-decoration:underline;padding:4px}
-.policy-box{display:none;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:12px;font-size:13px;color:#334155}
-.modal-overlay{display:none;position:fixed;inset:0;background:#0f172a99;z-index:9999;align-items:center;justify-content:center;padding:16px}
-.modal-box{background:white;max-width:380px;width:100%;border-radius:14px;padding:20px;text-align:center}
-.modal-msg{font-size:14px;margin-bottom:16px;white-space:pre-wrap;text-align:left;line-height:1.5}
-.modal-actions{display:flex;flex-direction:column;gap:8px}
-.modal-btn{background:var(--primary);color:white;border:0;padding:11px 20px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;text-decoration:none;display:block}
-.modal-btn-apk{background:var(--success);color:white}
-@media(max-width:420px){
-.input-grid-3{grid-template-columns:1fr 1fr}
-.input-grid-3>div:first-child{grid-column:1/-1}
-.status-grid{grid-template-columns:1fr 1fr}
-.cropper-wrapper{max-height:320px}
-.card{padding:15px}
-}
+:root{--blue:#2563eb;--green:#059669;--bg:#f1f5f9;--ink:#0f172a;--muted:#64748b;--line:#cbd5e1}
+*{box-sizing:border-box}body{margin:0;padding:12px;background:var(--bg);color:var(--ink);font:16px/1.5 Arial,sans-serif}
+main{max-width:650px;margin:10px auto}.card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 4px 16px #0001}
+header{text-align:center}h1{margin:0;color:var(--blue);font-size:28px}header p,.hint{font-size:13px;color:var(--muted)}
+.step{font-weight:bold;margin:20px 0 10px;display:flex;gap:8px;align-items:center}.num{background:var(--blue);color:white;border-radius:50%;width:26px;height:26px;display:inline-grid;place-items:center}
+.upload{display:block;padding:22px 12px;border:2px dashed var(--blue);border-radius:12px;background:#eff6ff;text-align:center;cursor:pointer}
+.upload strong{display:block}.upload small{display:block;color:var(--muted);margin-top:5px}
+input[type=file]{display:block;width:100%;padding:10px;margin-top:10px;background:#f8fafc;border:1px solid var(--line);border-radius:8px}
+.info,.preview{display:none;margin-top:12px;padding:12px;border-radius:9px;background:#eff6ff;text-align:center;font-size:13px}
+.crop-wrap{display:none;margin-top:12px}.crop-stage{height:340px;background:#0f172a;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#photo{display:block;max-width:100%;max-height:340px}
+.tools{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:9px}
+button,select,input[type=number]{font:inherit}button{border:0;border-radius:8px;padding:11px 13px;background:#e2e8f0;color:var(--ink);font-weight:bold;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}.primary{width:100%;margin-top:12px;background:var(--blue);color:white;padding:14px}.green{width:100%;margin-top:12px;background:var(--green);color:white;padding:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+label.field{display:block;font-size:13px;font-weight:bold;margin:8px 0 5px}
+select,input[type=number]{width:100%;padding:10px;border:2px solid var(--line);border-radius:8px;background:white;min-width:0}
+.summary{margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;text-align:center;font-size:13px}
+hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+.result{display:none;margin-top:16px;padding:14px;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.stat{background:white;border:1px solid #d1fae5;border-radius:7px;padding:8px 4px;text-align:center;font-size:11px;overflow-wrap:anywhere}.stat b{display:block;font-size:13px;margin-top:4px}
+#finalImage{display:block;max-width:100%;max-height:240px;margin:12px auto;border:1px solid var(--line)}
+.note{text-align:center;color:var(--muted);font-size:12px;margin:12px 0}
+#message{display:none;position:fixed;inset:0;background:#0008;z-index:9999;align-items:center;justify-content:center;padding:18px}
+#message>div{background:white;padding:20px;border-radius:12px;max-width:380px;width:100%}
+@media(max-width:420px){.grid3{grid-template-columns:1fr 1fr}.grid3>div:first-child{grid-column:1/-1}.stats{grid-template-columns:1fr 1fr}.card{padding:14px}.crop-stage{height:300px}}
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 </head>
 <body>
-
-<div class="modal-overlay" id="customModal">
-<div class="modal-box">
-<div class="modal-msg" id="customModalMsg"></div>
-<div class="modal-actions" id="customModalActions">
-<button type="button" class="modal-btn" id="customModalClose">ठीक है</button>
+<div id="message"><div><p id="messageText"></p><button class="primary" id="messageClose">ठीक है</button></div></div>
+<main><section class="card">
+<header><h1>ResizeProblem</h1><p>Photo & Signature Resizer · Crop · Pixel · KB / MB · DPI</p></header>
+<div class="step"><span class="num">1</span> फोटो चुनें और Crop करें</div>
+<label class="upload" for="fileInput">⬆<strong>यहाँ टैप करके फोटो चुनें</strong><small>JPG, PNG या WebP · अधिकतम 30 MB</small></label>
+<input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp">
+<div class="info" id="originalInfo"><b>Original Photo Pixels</b><div id="originalDims">—</div><div id="originalSize">—</div></div>
+<div class="crop-wrap" id="cropWrap">
+<div class="crop-stage"><img id="photo" alt="चुनी हुई फोटो"></div>
+<div class="tools">
+<button id="cropToggle" type="button">✂ Crop चालू करें</button>
+<button id="left" type="button">↶ बाएं</button><button id="right" type="button">↷ दाएं</button>
+<button id="freeCrop" type="button">Free Crop</button>
 </div>
+<p class="hint" id="cropHint">Crop चालू करके फोटो का हिस्सा चुनें। Cropper लाइब्रेरी उपलब्ध न होने पर भी Resize काम करेगा।</p>
 </div>
-</div>
-
-<main class="container">
-<section class="card">
-<header class="header">
-<h1>ResizeProblem</h1>
-<p>Photo & Signature Resizer</p>
-<p>Crop • Resize • Exact KB / MB • DPI</p>
-</header>
-
-<div class="app-banner" id="appBanner">
-<div class="app-banner-left">
-<img src="logo.png" alt="ResizeProblem App" onerror="this.style.display='none'">
-<div>
-<div class="app-banner-title">ResizeProblem Mobile App</div>
-<div class="app-banner-sub">तेज़ और ऑफलाइन इस्तेमाल के लिए ऐप डाउनलोड करें</div>
-</div>
-</div>
-<button type="button" class="app-install-btn" id="installAppBtn">📲 Download App</button>
-</div>
-
-<div class="step-title"><span class="step-number">1</span>फोटो अपलोड करें</div>
-
-<label class="drop-zone" for="fileInput">
-<div style="font-size:38px;color:#2563eb">⬆</div>
-<strong>यहाँ क्लिक करके फोटो चुनें</strong>
-<p>JPG, PNG, WebP सपोर्ट</p>
-<p>फोटो आपके डिवाइस पर ही प्रोसेस होती है।</p>
-</label>
-
-<input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp">
-
-<div class="original-info" id="originalInfo">
-<strong>Original Photo Pixels</strong>
-<div id="originalDimensions">-</div>
-<div id="originalFileSize">-</div>
-</div>
-
-<div class="cropper-container-box" id="cropperContainerBox">
-<div class="cropper-wrapper">
-<img id="imageToCrop" alt="Uploaded Photo">
-</div>
-<div class="crop-tools">
-<button class="tool-btn active-btn" type="button" id="toggleCropBtn">✂️ क्रॉप करें (Crop)</button>
-<button class="tool-btn" type="button" id="rotateLeftBtn">↺ बाएं घुमाएं</button>
-<button class="tool-btn" type="button" id="rotateRightBtn">↻ दाएं घुमाएं</button>
-<button class="tool-btn" type="button" id="lockRatioBtn" style="display:none">Ratio Lock</button>
-</div>
-<p class="notice" id="cropHintText">फोटो सुरक्षित है — हाथ से छूने पर नहीं हिलेगी। क्रॉप करने के लिए ऊपर "✂️ क्रॉप करें" बटन दबाएं।</p>
-</div>
-
 <hr>
-
-<div class="step-title"><span class="step-number">2</span>फोटो का Pixel और DPI सेट करें</div>
-
-<div class="input-grid-3">
-<div>
-<label class="field-label" for="unitSelect">Unit</label>
-<select id="unitSelect">
-<option value="px">Pixel (px)</option>
-<option value="cm">Centimeter (cm)</option>
-<option value="mm">Millimeter (mm)</option>
-</select>
+<div class="step"><span class="num">2</span> आउटपुट Pixels और DPI</div>
+<div class="grid3">
+<div><label class="field" for="unit">Unit</label><select id="unit"><option value="px">Pixel (px)</option><option value="cm">Centimeter (cm)</option><option value="mm">Millimeter (mm)</option></select></div>
+<div><label class="field" for="width">Width</label><input id="width" type="number" min="1" step="any" placeholder="Original"></div>
+<div><label class="field" for="height">Height</label><input id="height" type="number" min="1" step="any" placeholder="Original"></div>
 </div>
-<div>
-<label class="field-label" for="widthInput">Width</label>
-<input type="number" id="widthInput" placeholder="Original" min="1" step="any">
+<div class="summary" id="pixelSummary">पहले फोटो चुनें — Original Pixels अपने-आप भरेंगे</div>
+<div class="grid">
+<div><label class="field" for="dpi">DPI</label><input id="dpi" type="number" value="200" min="1" max="1200"></div>
+<div><label class="field" for="quality">JPEG Quality</label><select id="quality"><option value="auto">Automatic</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Small file</option></select></div>
 </div>
-<div>
-<label class="field-label" for="heightInput">Height</label>
-<input type="number" id="heightInput" placeholder="Original" min="1" step="any">
-</div>
-</div>
-
-<div class="pixel-preview" id="pixelPreview">पहले फोटो चुनें — Original Pixels अपने-आप दिखेंगे</div>
-
-<div class="input-grid-2">
-<div>
-<label class="field-label" for="dpiInput">DPI</label>
-<input type="number" id="dpiInput" value="200" min="1" max="1200">
-</div>
-<div>
-<label class="field-label" for="qualityInput">JPEG Quality</label>
-<select id="qualityInput">
-<option value="auto">Automatic (Best Quality)</option>
-<option value="high">High Quality</option>
-<option value="medium">Medium Quality</option>
-<option value="low">Low Size</option>
-</select>
-</div>
-</div>
-
 <hr>
-
-<div class="step-title"><span class="step-number">3</span>फोटो का Exact KB या MB साइज सेट करें</div>
-
-<div class="input-grid-2">
-<div>
-<label class="field-label" for="sizeUnit">File Size Unit</label>
-<select id="sizeUnit">
-<option value="KB">KB</option>
-<option value="MB">MB</option>
-</select>
+<div class="step"><span class="num">3</span> फाइल साइज (KB या MB)</div>
+<div class="grid">
+<div><label class="field" for="sizeUnit">Size Unit</label><select id="sizeUnit"><option value="KB">KB</option><option value="MB">MB</option></select></div>
+<div><label class="field" for="targetSize">Target Size</label><input id="targetSize" type="number" value="50" min="1" step="any"></div>
 </div>
-<div>
-<label class="field-label" for="targetSize">Exact File Size</label>
-<input type="number" id="targetSize" value="50" min="1" step="any">
-</div>
-</div>
-
-<p class="notice">जितना KB या MB आप डालेंगे, फोटो की क्वालिटी और पिक्सल बचाते हुए ठीक उतने ही साइज में डाउनलोड होगी।</p>
-
+<p class="hint">यह चुनी हुई साइज को अधिकतम लक्ष्य मानेगा। JPEG की क्वालिटी घटाकर फाइल छोटी की जाएगी। हर फोटो को बिल्कुल तय KB/MB बनाना तकनीकी रूप से हमेशा संभव नहीं होता; फाइल को नकली डेटा से भरकर exact नहीं किया जाएगा।</p>
 <hr>
-
-<div class="step-title"><span class="step-number">4</span>फोटो तैयार करें और डाउनलोड करें</div>
-
-<button type="button" class="btn" id="processBtn">फोटो तैयार करें (Exact KB / MB JPG)</button>
-
-<div class="status-box" id="resultStatus">
-<div class="status-header" id="statusHeader">✓ आपकी फोटो तैयार है!</div>
-<div class="status-grid">
-<div class="status-item">फाइनल Pixels<strong id="outDims">-</strong></div>
-<div class="status-item">फाइनल File Size<strong id="outSize">-</strong></div>
-<div class="status-item">DPI<strong id="outDPI">-</strong></div>
+<div class="step"><span class="num">4</span> तैयार करें और डाउनलोड करें</div>
+<button class="primary" id="process">फोटो तैयार करें</button>
+<div class="result" id="result">
+<div id="resultTitle" style="text-align:center;font-weight:bold;color:#065f46">फोटो तैयार है</div>
+<div class="stats">
+<div class="stat">Pixels<b id="outDims">—</b></div><div class="stat">File Size<b id="outSize">—</b></div><div class="stat">DPI<b id="outDpi">—</b></div>
 </div>
-<a id="directDownloadLink" class="btn-download" href="#" download="ResizeProblem.jpg" style="pointer-events:none;opacity:.5">⬇ DOWNLOAD JPG</a>
-<button type="button" id="shareDownloadBtn" class="btn btn-share">Share / Save Image</button>
-<div class="final-preview-box">
-<img id="finalPreviewImg" alt="Final Photo Preview">
-<div class="notice">डाउनलोड न हो तो फोटो को दबाकर रखें और Save Image चुनें।</div>
+<a id="download" class="green" href="#" download="ResizeProblem.jpg" style="display:block;text-align:center;text-decoration:none">⬇ DOWNLOAD JPG</a>
+<button class="green" id="share">Share / Save Image</button>
+<img id="finalImage" alt="तैयार फोटो">
+<p class="note" id="resultNote"></p>
 </div>
-<p class="notice" id="resultNote"></p>
-</div>
-
-<button type="button" class="btn-next" id="nextPhotoBtn" style="display:none">+ अगली फोटो अपलोड करें</button>
-</section>
-
-<section class="card seo-section">
-<h2>सरकारी फॉर्म (SSC, UPSC, Railway, PAN Card) के लिए फोटो और सिग्नेचर कैसे बनाएं?</h2>
-<p><strong>ResizeProblem</strong> एक मुफ्त और तेज़ ऑनलाइन फोटो व सिग्नेचर रिसाइज़र टूल है। सरकारी नौकरी (SSC CGL, CHSL, GD, UPSC, IBPS, Railway RRB, Police) या PAN Card व पासपोर्ट फॉर्म के लिए आप यहाँ निश्चित <strong>Width, Height (px/cm/mm), DPI (200 या 300 DPI)</strong> और <strong>KB / MB साइज</strong> में फोटो बना सकते हैं।</p>
-
-<h3>प्रमुख परीक्षाओं के लिए फोटो और सिग्नेचर साइज चार्ट</h3>
-<table class="exam-table">
-<thead><tr><th>परीक्षा / फॉर्म</th><th>फोटो साइज</th><th>फाइल साइज</th><th>DPI</th></tr></thead>
-<tbody>
-<tr><td><strong>SSC (CGL, CHSL, GD)</strong></td><td>3.5 cm × 4.5 cm</td><td>20 KB – 50 KB</td><td>200 DPI</td></tr>
-<tr><td><strong>UPSC / State PSC</strong></td><td>350 × 350 से 1000 × 1000 px</td><td>20 KB – 300 KB</td><td>200–300 DPI</td></tr>
-<tr><td><strong>Railway (RRB)</strong></td><td>3.5 cm × 4.5 cm</td><td>20 KB – 50 KB</td><td>200 DPI</td></tr>
-<tr><td><strong>Signature (हस्ताक्षर)</strong></td><td>4.0 cm × 2.0 cm</td><td>10 KB – 20 KB</td><td>200 DPI</td></tr>
-<tr><td><strong>PAN Card</strong></td><td>3.5 cm × 2.5 cm</td><td>20 KB – 50 KB</td><td>200–300 DPI</td></tr>
-</tbody>
-</table>
-
-<h3>अक्सर पूछे जाने वाले प्रश्न (FAQ)</h3>
-<div class="faq-item"><div class="faq-q">1. क्या मेरी फोटो किसी सर्वर पर अपलोड होती है?</div><div class="faq-a">नहीं। सारी प्रोसेसिंग आपके मोबाइल ब्राउज़र में होती है, इसलिए आपका डेटा 100% सुरक्षित है।</div></div>
-<div class="faq-item"><div class="faq-q">2. क्या इस टूल से 200 DPI या 300 DPI की फोटो बन सकती है?</div><div class="faq-a">हाँ, असली JFIF DPI मेटाडेटा के साथ JPG फोटो बनती है।</div></div>
-
-<div class="footer-links">
-<button type="button" class="footer-link-btn" onclick="togglePolicy('about')">About Us</button>
-<button type="button" class="footer-link-btn" onclick="togglePolicy('privacy')">Privacy Policy</button>
-<button type="button" class="footer-link-btn" onclick="togglePolicy('terms')">Terms & Conditions</button>
-<button type="button" class="footer-link-btn" onclick="togglePolicy('contact')">Contact Us</button>
-</div>
-
-<div id="policy-about" class="policy-box"><strong>About ResizeProblem:</strong> यह विद्यार्थियों और फॉर्म भरने वालों के लिए एक निःशुल्क फोटो व सिग्नेचर रिसाइज़र टूल है।</div>
-<div id="policy-privacy" class="policy-box"><strong>Privacy Policy:</strong> आपकी कोई भी फोटो हमारे सर्वर पर सेव नहीं होती; सारी प्रोसेसिंग आपके डिवाइस पर होती है।</div>
-<div id="policy-terms" class="policy-box"><strong>Terms & Conditions:</strong> कृपया फॉर्म में अपलोड करने से पहले आधिकारिक नोटिफिकेशन के निर्देशों की जांच अवश्य करें।</div>
-<div id="policy-contact" class="policy-box"><strong>Contact Us:</strong> किसी भी सहायता के लिए संपर्क करें: <strong>resizeproblem.help@gmail.com</strong></div>
-<p class="notice" style="margin-top:16px">© 2026 ResizeProblem — All Rights Reserved</p>
-</section>
-</main>
-
+<button id="next" style="display:none;width:100%;margin-top:12px">+ अगली फोटो</button>
+<p class="note">फोटो की प्रोसेसिंग आपके डिवाइस पर होती है।</p>
+</section></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 <script>
 'use strict';
-const $ = id => document.getElementById(id);
-
-if ('serviceWorker' in navigator) {
-window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+const $=id=>document.getElementById(id);
+let cropper=null, sourceUrl=null, outputUrl=null, outputBlob=null, sourceFile=null, originalW=0, originalH=0, rotation=0;
+function msg(t){$('messageText').textContent=t;$('message').style.display='flex'}
+$('messageClose').onclick=()=>$('message').style.display='none';
+$('message').onclick=e=>{if(e.target===$('message'))$('message').style.display='none'};
+function clearResult(){if(outputUrl)URL.revokeObjectURL(outputUrl);outputUrl=null;outputBlob=null;$('result').style.display='none';$('finalImage').removeAttribute('src');$('download').removeAttribute('href')}
+function dimensions(){
+ const u=$('unit').value,w=Number($('width').value),h=Number($('height').value),dpi=Number($('dpi').value);
+ if(!(w>0&&h>0&&Number.isFinite(w)&&Number.isFinite(h)))throw Error('Width और Height सही भरें।');
+ if(!(dpi>=1&&dpi<=1200))throw Error('DPI 1 से 1200 के बीच रखें।');
+ const pw=Math.round(u==='cm'?w/2.54*dpi:u==='mm'?w/25.4*dpi:w);
+ const ph=Math.round(u==='cm'?h/2.54*dpi:u==='mm'?h/25.4*dpi:h);
+ if(pw<1||ph<1||pw>10000||ph>10000||pw*ph>40000000)throw Error('आउटपुट Pixels बहुत बड़े हैं (अधिकतम 40 MP)।');
+ return {w:pw,h:ph,dpi};
 }
-
-let deferredPrompt = null;
-const installAppBtn = $('installAppBtn');
-const APK_DOWNLOAD_URL = 'https://github.com/resizeproblem/resizeproblem/releases/download/v1.0/app-release-signed.apk';
-
-window.addEventListener('beforeinstallprompt', e => {
-e.preventDefault();
-deferredPrompt = e;
-installAppBtn.textContent = '📲 Install App';
-});
-
-window.addEventListener('appinstalled', () => {
-deferredPrompt = null;
-$('appBanner').style.display = 'none';
-});
-
-if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
-$('appBanner').style.display = 'none';
+function updateSummary(){try{const d=dimensions();$('pixelSummary').textContent=`Output: ${d.w} × ${d.h} px`;}catch(e){$('pixelSummary').textContent=e.message}}
+$('unit').onchange=()=>{
+ if(!originalW)return;
+ const d=Number($('dpi').value)||200,u=$('unit').value;
+ const w=rotation%180?originalH:originalW,h=rotation%180?originalW:originalH;
+ $('width').value=u==='px'?w:(u==='cm'?w/d*2.54:w/d*25.4).toFixed(2);
+ $('height').value=u==='px'?h:(u==='cm'?h/d*2.54:h/d*25.4).toFixed(2);updateSummary();
+};
+['width','height','dpi'].forEach(id=>$(id).addEventListener('input',updateSummary));
+function setOriginalFields(){
+ $('unit').value='px';$('width').value=originalW;$('height').value=originalH;
+ $('originalDims').textContent=`${originalW} × ${originalH} Pixels`;
+ $('originalSize').textContent=`Original File Size: ${(sourceFile.size/1024).toFixed(2)} KB`;
+ $('originalInfo').style.display='block';updateSummary();
 }
-
-installAppBtn.addEventListener('click', async () => {
-if (deferredPrompt) {
-deferredPrompt.prompt();
-const res = await deferredPrompt.userChoice;
-if (res.outcome === 'accepted') deferredPrompt = null;
-} else {
-$('customModalMsg').textContent =
-'📲 ResizeProblem ऐप अपने फोन में इंस्टॉल करें:\n\n' +
-'तरीका 1 (सबसे आसान — 5 सेकंड):\n' +
-'• ब्राउज़र में ऊपर दाईं तरफ (⋮) दबाएं।\n' +
-'• "Install app" या "Add to Home screen" पर टैप करें।\n\n' +
-'तरीका 2 (Android APK डाउनलोड):\n' +
-'• नीचे हरे बटन से सीधे Android APK फाइल डाउनलोड करें।';
-$('customModalActions').innerHTML =
-'<a href="' + APK_DOWNLOAD_URL + '" class="modal-btn modal-btn-apk" target="_blank" rel="noopener">⬇ Download Android APK</a>' +
-'<button type="button" class="modal-btn" id="customModalClose">ठीक है</button>';
-$('customModal').style.display = 'flex';
-$('customModalClose').onclick = () => $('customModal').style.display = 'none';
+function stopCrop(){if(cropper){cropper.destroy();cropper=null} $('cropToggle').textContent='✂ Crop चालू करें'}
+function loadFile(file){
+ if(!file)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(file.type)){msg('JPG, PNG या WebP फोटो चुनें।');return}
+ if(file.size>30*1024*1024){msg('30 MB से छोटी फोटो चुनें।');return}
+ clearResult();stopCrop();if(sourceUrl)URL.revokeObjectURL(sourceUrl);
+ sourceFile=file;rotation=0;sourceUrl=URL.createObjectURL(file);
+ const img=$('photo');$('cropWrap').style.display='block';
+ img.onload=()=>{originalW=img.naturalWidth;originalH=img.naturalHeight;setOriginalFields();$('next').style.display='block'};
+ img.onerror=()=>msg('फोटो खुल नहीं पाई। दूसरी फोटो चुनें।');img.src=sourceUrl;
 }
-});
-
-function togglePolicy(type) {
-['about', 'privacy', 'terms', 'contact'].forEach(id => {
-const el = $('policy-' + id);
-el.style.display = (id === type && el.style.display !== 'block') ? 'block' : 'none';
-});
+$('fileInput').addEventListener('change',e=>loadFile(e.target.files&&e.target.files[0]));
+$('cropToggle').onclick=()=>{
+ if(!sourceUrl)return;
+ if(cropper){stopCrop();$('cropHint').textContent='Crop बंद है।';return}
+ if(typeof Cropper==='undefined'){msg('Crop सुविधा के लिए इंटरनेट कनेक्शन चाहिए। Resize फिर भी काम करेगा।');return}
+ try{cropper=new Cropper($('photo'),{viewMode:1,autoCropArea:.9,background:false,responsive:true,zoomOnWheel:true,rotatable:true,ready(){}});$('cropToggle').textContent='Crop लागू करें / बंद करें';$('cropHint').textContent='Crop बॉक्स खींचकर फोटो का हिस्सा चुनें।'}
+ catch(e){msg('Crop शुरू नहीं हुआ: '+e.message)}
+};
+$('freeCrop').onclick=()=>{if(cropper)cropper.setAspectRatio(NaN)};
+function rotate(delta){
+ if(!sourceUrl)return;
+ rotation=(rotation+delta+360)%360;
+ if(cropper)cropper.rotate(delta);else $('photo').style.transform=`rotate(${rotation}deg)`;
+ const rw=rotation%180?originalH:originalW,rh=rotation%180?originalW:originalH;
+ if($('unit').value==='px'){$('width').value=rw;$('height').value=rh;updateSummary()}
 }
-
-let cropper = null, isCropActive = false, currentRotation = 0, originalObjectUrl = null, currentObjectUrl = null, finalImageBlob = null, finalFileName = 'ResizeProblem.jpg', isRatioLocked = false, originalWidth = 0, originalHeight = 0, lastLoadedKey = '';
-
-const fileInput = $('fileInput'), imageToCrop = $('imageToCrop'), cropperContainerBox = $('cropperContainerBox'), resultStatus = $('resultStatus'), directDownloadLink = $('directDownloadLink'), finalPreviewImg = $('finalPreviewImg'), processBtn = $('processBtn'), toggleCropBtn = $('toggleCropBtn'), lockRatioBtn = $('lockRatioBtn');
-
-function showMessage(message) {
-$('customModalMsg').textContent = message;
-$('customModalActions').innerHTML = '<button type="button" class="modal-btn" id="customModalClose">ठीक है</button>';
-$('customModal').style.display = 'flex';
-$('customModalClose').onclick = () => $('customModal').style.display = 'none';
+$('left').onclick=()=>rotate(-90);$('right').onclick=()=>rotate(90);
+function canvasFromImage(d){
+ if(cropper)return cropper.getCroppedCanvas({width:d.w,height:d.h,fillColor:'#fff',imageSmoothingEnabled:true,imageSmoothingQuality:'high'});
+ const c=document.createElement('canvas');c.width=d.w;c.height=d.h;const x=c.getContext('2d');
+ x.fillStyle='#fff';x.fillRect(0,0,d.w,d.h);x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';
+ x.save();x.translate(d.w/2,d.h/2);x.rotate(rotation*Math.PI/180);
+ if(rotation%180)x.drawImage($('photo'),-d.h/2,-d.w/2,d.h,d.w);else x.drawImage($('photo'),-d.w/2,-d.h/2,d.w,d.h);
+ x.restore();return c;
 }
-
-$('customModalClose').onclick = () => $('customModal').style.display = 'none';
-$('customModal').onclick = e => { if (e.target === $('customModal')) $('customModal').style.display = 'none'; };
-
-function clearOutput() {
-if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
-currentObjectUrl = null; finalImageBlob = null;
-finalPreviewImg.removeAttribute('src');
-directDownloadLink.removeAttribute('href');
-directDownloadLink.style.pointerEvents = 'none';
-directDownloadLink.style.opacity = '.5';
-resultStatus.style.display = 'none';
+const toBlob=(c,q)=>new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('JPG तैयार नहीं हुआ।')),'image/jpeg',q));
+async function addDpi(blob,dpi){
+ const b=await blob.arrayBuffer(),v=new DataView(b);if(v.getUint16(0)!==0xffd8)return blob;
+ const n=Math.max(1,Math.min(65535,Math.round(dpi)));
+ const seg=new Uint8Array([255,224,0,16,74,70,73,70,0,1,1,1,(n>>8)&255,n&255,(n>>8)&255,n&255,0,0]);
+ let off=2;if(b.byteLength>=6&&v.getUint16(2)===0xffe0){const len=v.getUint16(4);if(len>=2&&4+len<=b.byteLength)off=4+len}
+ const out=new Uint8Array(2+seg.length+b.byteLength-off);out.set([255,216]);out.set(seg,2);out.set(new Uint8Array(b,off),2+seg.length);return new Blob([out],{type:'image/jpeg'});
 }
-
-function formatBytes(bytes) {
-return bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + ' MB' : (bytes / 1024).toFixed(2) + ' KB';
+function targetBytes(){
+ const n=Number($('targetSize').value);if(!(n>0&&Number.isFinite(n)))throw Error('Target Size सही भरें।');
+ const bytes=Math.round(n*($('sizeUnit').value==='MB'?1048576:1024));
+ if(bytes<1024||bytes>50*1048576)throw Error('Target 1 KB से 50 MB के बीच रखें।');return bytes;
 }
-
-function disableCropMode() {
-if (cropper) { cropper.destroy(); cropper = null; }
-isCropActive = false; isRatioLocked = false;
-toggleCropBtn.textContent = '✂️ क्रॉप करें (Crop)';
-toggleCropBtn.cla
+function qualityRange(){return $('quality').value==='high'?[.72,.98]:$('quality').value==='medium'?[.4,.88]:$('quality').value==='low'?[.15,.65]:[.15,.98]}
+async function compress(canvas,limit,dpi){
+ const [min,max]=qualityRange();let best=null;
+ // Find highest quality that stays within the requested maximum size.
+ for(let q=max;q>=min-.001;q-=.04){const b=await addDpi(await toBlob(canvas,Math.max(min,q)),dpi);if(b.size<=limit){best=b;break}}
+ if(!best)best=await addDpi(await toBlob(canvas,min),dpi);
+ return best;
+}
+$('process').onclick=async()=>{
+ if(!sourceUrl||!$('photo').naturalWidth){msg('पहले फोटो चुनें।');return}
+ const btn=$('process');btn.disabled=true;btn.textContent='फोटो तैयार हो रही है…';
+ try{
+  const d=dimensions(),limit=targetBytes(),canvas=canvasFromImage(d),blob=await compress(canvas,limit,d.dpi);
+  clearResult();outputBlob=blob;outputUrl=URL.createObjectURL(blob);
+  const name=`ResizeProblem_${d.w}x${d.h}_${d.dpi}dpi.jpg`;
+  $('download').href=outputUrl;$('download').download=name;$('finalImage').src=outputUrl;
+  $('outDims').textContent=`${d.w} × ${d.h} px`;$('outSize').textContent=blob.size>=1048576?(blob.size/1048576).toFixed(2)+' MB':(blob.size/1024).toFixed(2)+' KB';$('outDpi').textContent=d.dpi+' DPI';
+  $('resultTitle').textContent=blob.size<=limit?'✓ फोटो target size के अंदर तैयार है':'फोटो तैयार है, लेकिन target size से बड़ी है';
+  $('resultNote').textContent=blob.size<=limit?'डाउनलोड बटन दबाकर JPG सेव करें।':'इस पिक्सल साइज पर target file size हासिल नहीं हुई। Target size बढ़ाएं या output pixels कम करें।';
+  $('result').style.display='block';$('result').scrollIntoView({behavior:'smooth',block:'nearest'});
+ }catch(e){msg(e.message||'फोटो तैयार नहीं हुई।')}
+ finally{btn.disabled=false;btn.textContent='फोटो तैयार करें'}
+};
+$('download').onclick=e=>{if(!outputBlob){e.preventDefault();msg('पहले फोटो तैयार करें।')}};
+$('share').onclick=async()=>{
+ if(!outputBlob){msg('पहले फोटो तैयार करें।');return}
+ try{const f=new File([outputBlob],'ResizeProblem.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],title:'ResizeProblem'});else msg('इस ब्राउज़र में Share उपलब्ध नहीं है। हरे Download बटन का उपयोग करें।')}
+ catch(e){if(e.name!=='AbortError')msg('Share नहीं हो सका। Download बटन दबाएं।')}
+};
+$('next').onclick=()=>{
+ stopCrop();clearResult();if(sourceUrl)URL.revokeObjectURL(sourceUrl);sourceUrl=null;sourceFile=null;originalW=originalH=0;rotation=0;
+ $('photo').removeAttribute('src');$('photo').style.transform='';$('cropWrap').style.display='none';$('originalInfo').style.display='none';$('next').style.display='none';$('fileInput').value='';$('width').value='';$('height').value='';$('pixelSummary').textContent='पहले फोटो चुनें — Original Pixels अपने-आप भरेंगे';
+ $('fileInput').click();
+};
+if('serviceWorker' in navigator && location.protocol!=='file:'){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body></html>
