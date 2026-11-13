@@ -9,268 +9,95 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 
-<!-- SEO Meta Tags -->
 <title>ResizeProblem - Free Photo & Signature Resizer (Exact KB, MB & DPI)</title>
 <meta name="description" content="ResizeProblem is a free online photo and signature resizer tool for SSC, UPSC, Railway, IBPS, and PAN card forms. Resize images to exact KB, MB, pixels (px, cm, mm), and 200/300 DPI online on mobile.">
 <meta name="keywords" content="photo resizer 50kb, signature resizer 20kb, ssc photo resizer, upsc photo dpi converter, image compressor exact kb mb, resizeproblem">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://resizeproblem.github.io/resizeproblem/">
 
-<!-- Open Graph for Social Sharing -->
 <meta property="og:title" content="ResizeProblem - Online Photo & Signature Resizer (KB/MB & DPI)">
 <meta property="og:description" content="मोबाइल से सरकारी फॉर्म (SSC, UPSC, Railway) के लिए फोटो और सिग्नेचर को ठीक KB/MB और 200/300 DPI में बनाएं।">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://resizeproblem.github.io/resizeproblem/">
 <meta property="og:image" content="https://resizeproblem.github.io/resizeproblem/logo.png">
 
-<!-- Structured Data (WebApplication Schema for Google Ranking) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "ResizeProblem",
-  "url": "https://resizeproblem.github.io/resizeproblem/",
-  "applicationCategory": "UtilityApplication",
-  "operatingSystem": "All",
-  "description": "Free online photo and signature resizer for exact KB, MB, pixels, cm, mm, and DPI.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "INR"
-  }
-}
-</script>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 
 <style>
-:root{
---primary:#2563eb;
---success:#059669;
---bg:#f1f5f9;
---text:#0f172a;
---muted:#64748b;
---border:#cbd5e1;
-}
+:root{--primary:#2563eb;--success:#059669;--bg:#f1f5f9;--text:#0f172a;--muted:#64748b;--border:#cbd5e1}
 *{box-sizing:border-box}
-body{
-margin:0;padding:12px;background:var(--bg);
-color:var(--text);font-family:Arial,sans-serif;
-line-height:1.6
-}
+body{margin:0;padding:12px;background:var(--bg);color:var(--text);font-family:Arial,sans-serif;line-height:1.6}
 .container{max-width:650px;margin:10px auto}
-.card{
-background:white;padding:20px;border-radius:16px;
-box-shadow:0 4px 15px #00000012;margin-bottom:18px
-}
-.header{text-align:center;margin-bottom:18px}
+.card{background:white;padding:20px;border-radius:16px;box-shadow:0 4px 15px #00000012;margin-bottom:18px}
+.header{text-align:center;margin-bottom:16px}
 .header h1{margin:0;color:var(--primary);font-size:28px}
 .header p,.notice{font-size:13px;color:var(--muted)}
-
-/* App Download Banner */
-.app-banner{
-background:linear-gradient(135deg,#1e3a8a,#2563eb);
-color:white;border-radius:12px;padding:12px 14px;
-margin-bottom:18px;display:flex;align-items:center;
-justify-content:space-between;gap:10px;
-box-shadow:0 4px 12px #2563eb33
-}
-.app-banner-left{
-display:flex;align-items:center;gap:10px;text-align:left
-}
-.app-banner-left img{
-width:42px;height:42px;border-radius:10px;
-background:white;object-fit:cover;flex:none
-}
+.app-banner{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:white;border-radius:12px;padding:12px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.app-banner-left{display:flex;align-items:center;gap:10px;text-align:left}
+.app-banner-left img{width:42px;height:42px;border-radius:10px;background:white;object-fit:cover;flex:none}
 .app-banner-title{font-weight:bold;font-size:14px;line-height:1.2}
 .app-banner-sub{font-size:11px;opacity:.9;margin-top:2px}
-.app-install-btn{
-background:#10b981;color:white;border:0;
-padding:9px 13px;border-radius:8px;font-weight:bold;
-font-size:13px;cursor:pointer;white-space:nowrap;flex:none;
-text-decoration:none;display:inline-block
-}
-.app-install-btn:active{transform:scale(0.97)}
-
-.step-title{
-font-weight:bold;margin:18px 0 12px;
-display:flex;align-items:center;gap:8px
-}
-.step-number{
-background:var(--primary);color:white;width:26px;height:26px;
-border-radius:50%;display:inline-flex;
-justify-content:center;align-items:center;flex:none
-}
-.drop-zone{
-display:block;border:2px dashed var(--primary);
-border-radius:12px;padding:24px 12px;
-text-align:center;background:#eff6ff;cursor:pointer
-}
+.app-install-btn{background:#10b981;color:white;border:0;padding:9px 13px;border-radius:8px;font-weight:bold;font-size:13px;cursor:pointer;white-space:nowrap;flex:none}
+.step-title{font-weight:bold;margin:18px 0 12px;display:flex;align-items:center;gap:8px}
+.step-number{background:var(--primary);color:white;width:26px;height:26px;border-radius:50%;display:inline-flex;justify-content:center;align-items:center;flex:none}
+.drop-zone{display:block;border:2px dashed var(--primary);border-radius:12px;padding:22px 12px;text-align:center;background:#eff6ff;cursor:pointer}
 .drop-zone p{font-size:13px;color:var(--muted);margin:5px 0}
-#fileInput{
-display:block;width:100%;margin-top:12px;
-padding:8px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;font-size:15px
-}
-.original-info{
-display:none;background:#eff6ff;border:1px solid #bfdbfe;
-border-radius:9px;padding:12px;margin-top:12px;
-font-size:13px;text-align:center
-}
+#fileInput{display:block;width:100%;margin-top:12px;padding:8px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;font-size:15px}
+.original-info{display:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:12px;margin-top:12px;font-size:13px;text-align:center}
 .cropper-container-box{display:none;margin-top:12px}
-.cropper-wrapper{
-position:relative;width:100%;min-height:220px;max-height:360px;
-overflow:hidden;background:#0f172a;border-radius:10px;
-display:flex;align-items:center;justify-content:center
-}
-.cropper-wrapper img{
-display:block;max-width:100%;max-height:360px;margin:auto;
-pointer-events:none;user-select:none;-webkit-user-select:none
-}
-.crop-tools{
-display:flex;flex-wrap:wrap;justify-content:center;
-gap:7px;margin-top:10px
-}
-.tool-btn{
-border:0;background:#e2e8f0;color:var(--text);
-padding:10px 12px;border-radius:7px;font-weight:bold;
-cursor:pointer
-}
-.tool-btn.active-btn{
-background:var(--primary);color:white
-}
-hr{border:0;border-top:1px solid var(--border);margin:22px 0}
-.input-grid-3{
-display:grid;grid-template-columns:1fr 1fr 1fr;
-gap:8px;margin-bottom:12px
-}
-.input-grid-2{
-display:grid;grid-template-columns:1fr 1fr;gap:10px
-}
-.field-label{
-display:block;font-size:13px;font-weight:bold;margin-bottom:5px
-}
-select,input[type=number]{
-width:100%;padding:11px 8px;border:2px solid var(--border);
-border-radius:8px;font-size:16px;background:white;color:var(--text)
-}
-.pixel-preview{
-background:#f8fafc;border:1px solid #e2e8f0;
-padding:10px;border-radius:7px;text-align:center;
-font-size:13px;margin:10px 0 13px
-}
-.btn{
-width:100%;padding:14px;border:0;border-radius:9px;
-background:var(--primary);color:white;font-size:16px;
-font-weight:bold;cursor:pointer;margin-top:12px
-}
+.cropper-wrapper{position:relative;width:100%;min-height:220px;max-height:360px;overflow:hidden;background:#0f172a;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.cropper-wrapper img{display:block;max-width:100%;max-height:360px;margin:auto;pointer-events:none;user-select:none;-webkit-user-select:none}
+.crop-tools{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin-top:10px}
+.tool-btn{border:0;background:#e2e8f0;color:var(--text);padding:10px 12px;border-radius:7px;font-weight:bold;cursor:pointer}
+.tool-btn.active-btn{background:var(--primary);color:white}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+.input-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.input-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-label{display:block;font-size:13px;font-weight:bold;margin-bottom:5px}
+select,input[type=number]{width:100%;padding:11px 8px;border:2px solid var(--border);border-radius:8px;font-size:16px;background:white;color:var(--text)}
+.pixel-preview{background:#f8fafc;border:1px solid #e2e8f0;padding:10px;border-radius:7px;text-align:center;font-size:13px;margin:10px 0 13px}
+.btn{width:100%;padding:14px;border:0;border-radius:9px;background:var(--primary);color:white;font-size:16px;font-weight:bold;cursor:pointer;margin-top:12px}
 .btn:disabled{background:#94a3b8;cursor:wait}
-.btn-download{
-display:block;background:var(--success);color:white;
-text-decoration:none;text-align:center;padding:15px;
-font-size:17px;font-weight:bold;border-radius:9px;margin-top:15px
-}
+.btn-download{display:block;background:var(--success);color:white;text-decoration:none;text-align:center;padding:15px;font-size:17px;font-weight:bold;border-radius:9px;margin-top:15px}
 .btn-share{background:#0f766e}
-.btn-next{
-width:100%;padding:13px;border:0;border-radius:9px;
-margin-top:12px;background:#e2e8f0;color:var(--text);
-font-weight:bold;font-size:15px;cursor:pointer
-}
-.status-box{
-display:none;background:#ecfdf5;border:1px solid #a7f3d0;
-border-radius:12px;padding:14px;margin-top:16px
-}
+.btn-next{width:100%;padding:13px;border:0;border-radius:9px;margin-top:12px;background:#e2e8f0;color:var(--text);font-weight:bold;font-size:15px;cursor:pointer}
+.status-box{display:none;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:12px;padding:14px;margin-top:16px}
 .status-header{text-align:center;color:#065f46;font-weight:bold;margin-bottom:12px}
 .status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.status-item{
-background:white;border:1px solid #d1fae5;
-border-radius:7px;padding:8px 4px;text-align:center;
-font-size:11px;overflow-wrap:anywhere
-}
+.status-item{background:white;border:1px solid #d1fae5;border-radius:7px;padding:8px 4px;text-align:center;font-size:11px;overflow-wrap:anywhere}
 .status-item strong{display:block;font-size:13px;margin-top:4px}
-.final-preview-box{
-margin-top:12px;padding:12px;background:white;
-text-align:center;border-radius:9px
-}
-.final-preview-box img{
-max-width:100%;max-height:250px;display:block;
-margin:auto;border:1px solid var(--border);
-user-select:auto;-webkit-touch-callout:default
-}
+.final-preview-box{margin-top:12px;padding:12px;background:white;text-align:center;border-radius:9px}
+.final-preview-box img{max-width:100%;max-height:250px;display:block;margin:auto;border:1px solid var(--border);user-select:auto;-webkit-touch-callout:default}
 .notice{text-align:center;margin-top:12px}
-
-/* SEO Content & Policy Sections */
-.seo-section h2{
-font-size:19px;color:var(--primary);margin:0 0 10px 0
-}
-.seo-section h3{
-font-size:16px;color:var(--text);margin:16px 0 6px 0
-}
-.seo-section p,.seo-section li{
-font-size:14px;color:#334155;margin-bottom:8px
-}
-.seo-section ul{
-padding-left:20px;margin:8px 0
-}
-.exam-table{
-width:100%;border-collapse:collapse;margin:12px 0;font-size:13px
-}
-.exam-table th,.exam-table td{
-border:1px solid var(--border);padding:8px;text-align:left
-}
-.exam-table th{
-background:#eff6ff;color:var(--text)
-}
-.faq-item{
-border-bottom:1px solid #e2e8f0;padding:10px 0
-}
+.seo-section h2{font-size:19px;color:var(--primary);margin:0 0 10px 0}
+.seo-section h3{font-size:16px;color:var(--text);margin:16px 0 6px 0}
+.seo-section p,.seo-section li{font-size:14px;color:#334155;margin-bottom:8px}
+.seo-section ul{padding-left:20px;margin:8px 0}
+.exam-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.exam-table th,.exam-table td{border:1px solid var(--border);padding:8px;text-align:left}
+.exam-table th{background:#eff6ff;color:var(--text)}
+.faq-item{border-bottom:1px solid #e2e8f0;padding:10px 0}
 .faq-item:last-child{border-bottom:0}
 .faq-q{font-weight:bold;font-size:14px;color:var(--text);margin-bottom:4px}
 .faq-a{font-size:13px;color:#475569}
-
-.footer-links{
-display:flex;flex-wrap:wrap;justify-content:center;gap:12px;
-margin-top:14px;padding-top:14px;border-top:1px solid var(--border)
-}
-.footer-link-btn{
-background:none;border:0;color:var(--primary);
-font-size:13px;font-weight:bold;cursor:pointer;text-decoration:underline;padding:4px
-}
-.policy-box{
-display:none;background:#f8fafc;border:1px solid var(--border);
-border-radius:10px;padding:14px;margin-top:12px;font-size:13px;color:#334155
-}
-
-.modal-overlay{
-display:none;position:fixed;inset:0;background:#0f172a99;
-z-index:9999;align-items:center;justify-content:center;padding:16px
-}
-.modal-box{
-background:white;max-width:380px;width:100%;
-border-radius:14px;padding:20px;text-align:center
-}
-.modal-msg{font-size:15px;margin-bottom:16px;white-space:pre-wrap;text-align:left;line-height:1.5}
-.modal-actions{
-display:flex;flex-direction:column;gap:8px
-}
-.modal-btn{
-background:var(--primary);color:white;border:0;
-padding:11px 20px;border-radius:8px;font-weight:bold;
-font-size:14px;cursor:pointer;text-decoration:none;display:block
-}
-.modal-btn-apk{
-background:var(--success);color:white
-}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.footer-link-btn{background:none;border:0;color:var(--primary);font-size:13px;font-weight:bold;cursor:pointer;text-decoration:underline;padding:4px}
+.policy-box{display:none;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:12px;font-size:13px;color:#334155}
+.modal-overlay{display:none;position:fixed;inset:0;background:#0f172a99;z-index:9999;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:white;max-width:380px;width:100%;border-radius:14px;padding:20px;text-align:center}
+.modal-msg{font-size:14px;margin-bottom:16px;white-space:pre-wrap;text-align:left;line-height:1.5}
+.modal-actions{display:flex;flex-direction:column;gap:8px}
+.modal-btn{background:var(--primary);color:white;border:0;padding:11px 20px;border-radius:8px;font-weight:bold;font-size:14px;cursor:pointer;text-decoration:none;display:block}
+.modal-btn-apk{background:var(--success);color:white}
 @media(max-width:420px){
 .input-grid-3{grid-template-columns:1fr 1fr}
 .input-grid-3>div:first-child{grid-column:1/-1}
 .status-grid{grid-template-columns:1fr 1fr}
 .cropper-wrapper{max-height:320px}
 .card{padding:15px}
-.app-banner{padding:10px 12px}
 }
 </style>
 </head>
-
 <body>
 
 <div class="modal-overlay" id="customModal">
@@ -283,16 +110,13 @@ background:var(--success);color:white
 </div>
 
 <main class="container">
-<!-- MAIN TOOL CARD -->
 <section class="card">
-
 <header class="header">
 <h1>ResizeProblem</h1>
 <p>Photo & Signature Resizer</p>
 <p>Crop • Resize • Exact KB / MB • DPI</p>
 </header>
 
-<!-- MOBILE APP DOWNLOAD / INSTALL BANNER -->
 <div class="app-banner" id="appBanner">
 <div class="app-banner-left">
 <img src="logo.png" alt="ResizeProblem App" onerror="this.style.display='none'">
@@ -304,11 +128,7 @@ background:var(--success);color:white
 <button type="button" class="app-install-btn" id="installAppBtn">📲 Download App</button>
 </div>
 
-<!-- STEP 1 -->
-<div class="step-title">
-<span class="step-number">1</span>
-फोटो अपलोड करें
-</div>
+<div class="step-title"><span class="step-number">1</span>फोटो अपलोड करें</div>
 
 <label class="drop-zone" for="fileInput">
 <div style="font-size:38px;color:#2563eb">⬆</div>
@@ -325,33 +145,24 @@ background:var(--success);color:white
 <div id="originalFileSize">-</div>
 </div>
 
-<!-- IMAGE PREVIEW & ON-DEMAND CROPPER -->
 <div class="cropper-container-box" id="cropperContainerBox">
-
 <div class="cropper-wrapper">
 <img id="imageToCrop" alt="Uploaded Photo">
 </div>
-
 <div class="crop-tools">
 <button class="tool-btn active-btn" type="button" id="toggleCropBtn">✂️ क्रॉप करें (Crop)</button>
 <button class="tool-btn" type="button" id="rotateLeftBtn">↺ बाएं घुमाएं</button>
 <button class="tool-btn" type="button" id="rotateRightBtn">↻ दाएं घुमाएं</button>
 <button class="tool-btn" type="button" id="lockRatioBtn" style="display:none">Ratio Lock</button>
 </div>
-
 <p class="notice" id="cropHintText">फोटो सुरक्षित है — हाथ से छूने पर नहीं हिलेगी। क्रॉप करने के लिए ऊपर "✂️ क्रॉप करें" बटन दबाएं।</p>
 </div>
 
 <hr>
 
-<!-- STEP 2 -->
-<div class="step-title">
-<span class="step-number">2</span>
-फोटो का Pixel और DPI सेट करें
-</div>
+<div class="step-title"><span class="step-number">2</span>फोटो का Pixel और DPI सेट करें</div>
 
 <div class="input-grid-3">
-
 <div>
 <label class="field-label" for="unitSelect">Unit</label>
 <select id="unitSelect">
@@ -360,29 +171,23 @@ background:var(--success);color:white
 <option value="mm">Millimeter (mm)</option>
 </select>
 </div>
-
 <div>
 <label class="field-label" for="widthInput">Width</label>
 <input type="number" id="widthInput" placeholder="Original" min="1" step="any">
 </div>
-
 <div>
 <label class="field-label" for="heightInput">Height</label>
 <input type="number" id="heightInput" placeholder="Original" min="1" step="any">
 </div>
-
 </div>
 
-<div class="pixel-preview" id="pixelPreview">
-पहले फोटो चुनें — Original Pixels अपने-आप दिखेंगे
-</div>
+<div class="pixel-preview" id="pixelPreview">पहले फोटो चुनें — Original Pixels अपने-आप दिखेंगे</div>
 
 <div class="input-grid-2">
 <div>
 <label class="field-label" for="dpiInput">DPI</label>
 <input type="number" id="dpiInput" value="200" min="1" max="1200">
 </div>
-
 <div>
 <label class="field-label" for="qualityInput">JPEG Quality</label>
 <select id="qualityInput">
@@ -396,14 +201,9 @@ background:var(--success);color:white
 
 <hr>
 
-<!-- STEP 3 -->
-<div class="step-title">
-<span class="step-number">3</span>
-फोटो का Exact KB या MB साइज सेट करें
-</div>
+<div class="step-title"><span class="step-number">3</span>फोटो का Exact KB या MB साइज सेट करें</div>
 
 <div class="input-grid-2">
-
 <div>
 <label class="field-label" for="sizeUnit">File Size Unit</label>
 <select id="sizeUnit">
@@ -411,158 +211,59 @@ background:var(--success);color:white
 <option value="MB">MB</option>
 </select>
 </div>
-
 <div>
 <label class="field-label" for="targetSize">Exact File Size</label>
 <input type="number" id="targetSize" value="50" min="1" step="any">
 </div>
-
 </div>
 
-<p class="notice">
-जितना KB या MB आप डालेंगे, फोटो की क्वालिटी और पिक्सल बचाते हुए ठीक उतने ही साइज में डाउनलोड होगी।
-</p>
+<p class="notice">जितना KB या MB आप डालेंगे, फोटो की क्वालिटी और पिक्सल बचाते हुए ठीक उतने ही साइज में डाउनलोड होगी।</p>
 
 <hr>
 
-<!-- STEP 4 -->
-<div class="step-title">
-<span class="step-number">4</span>
-फोटो तैयार करें और डाउनलोड करें
-</div>
+<div class="step-title"><span class="step-number">4</span>फोटो तैयार करें और डाउनलोड करें</div>
 
-<button type="button" class="btn" id="processBtn">
-फोटो तैयार करें (Exact KB / MB JPG)
-</button>
+<button type="button" class="btn" id="processBtn">फोटो तैयार करें (Exact KB / MB JPG)</button>
 
 <div class="status-box" id="resultStatus">
-
-<div class="status-header" id="statusHeader">
-✓ आपकी फोटो तैयार है!
-</div>
-
+<div class="status-header" id="statusHeader">✓ आपकी फोटो तैयार है!</div>
 <div class="status-grid">
-
-<div class="status-item">
-फाइनल Pixels
-<strong id="outDims">-</strong>
+<div class="status-item">फाइनल Pixels<strong id="outDims">-</strong></div>
+<div class="status-item">फाइनल File Size<strong id="outSize">-</strong></div>
+<div class="status-item">DPI<strong id="outDPI">-</strong></div>
 </div>
-
-<div class="status-item">
-फाइनल File Size
-<strong id="outSize">-</strong>
-</div>
-
-<div class="status-item">
-DPI
-<strong id="outDPI">-</strong>
-</div>
-
-</div>
-
-<a id="directDownloadLink"
-class="btn-download"
-href="#"
-download="ResizeProblem.jpg"
-style="pointer-events:none;opacity:.5">
-⬇ DOWNLOAD JPG
-</a>
-
-<button type="button" id="shareDownloadBtn" class="btn btn-share">
-Share / Save Image
-</button>
-
+<a id="directDownloadLink" class="btn-download" href="#" download="ResizeProblem.jpg" style="pointer-events:none;opacity:.5">⬇ DOWNLOAD JPG</a>
+<button type="button" id="shareDownloadBtn" class="btn btn-share">Share / Save Image</button>
 <div class="final-preview-box">
 <img id="finalPreviewImg" alt="Final Photo Preview">
-<div class="notice">
-डाउनलोड न हो तो फोटो को दबाकर रखें और Save Image चुनें।
+<div class="notice">डाउनलोड न हो तो फोटो को दबाकर रखें और Save Image चुनें।</div>
 </div>
-</div>
-
 <p class="notice" id="resultNote"></p>
-
 </div>
 
-<button type="button" class="btn-next" id="nextPhotoBtn" style="display:none">
-+ अगली फोटो अपलोड करें
-</button>
-
+<button type="button" class="btn-next" id="nextPhotoBtn" style="display:none">+ अगली फोटो अपलोड करें</button>
 </section>
 
-<!-- SEO GUIDE & EXAM REQUIREMENTS SECTION -->
 <section class="card seo-section">
 <h2>सरकारी फॉर्म (SSC, UPSC, Railway, PAN Card) के लिए फोटो और सिग्नेचर कैसे बनाएं?</h2>
-<p>
-<strong>ResizeProblem</strong> एक मुफ्त और तेज़ ऑनलाइन फोटो व सिग्नेचर रिसाइज़र टूल है। जब आप किसी भी सरकारी नौकरी (जैसे SSC CGL, CHSL, GD, UPSC, IBPS, Railway RRB, Police भर्ती) या PAN Card व पासपोर्ट का ऑनलाइन फॉर्म भरते हैं, तो वेबसाइट पर फोटो और हस्ताक्षर (Signature) के लिए निश्चित <strong>Width, Height (px/cm/mm), DPI (200 या 300 DPI)</strong> और <strong>KB / MB साइज</strong> मांगा जाता है।
-</p>
+<p><strong>ResizeProblem</strong> एक मुफ्त और तेज़ ऑनलाइन फोटो व सिग्नेचर रिसाइज़र टूल है। सरकारी नौकरी (SSC CGL, CHSL, GD, UPSC, IBPS, Railway RRB, Police) या PAN Card व पासपोर्ट फॉर्म के लिए आप यहाँ निश्चित <strong>Width, Height (px/cm/mm), DPI (200 या 300 DPI)</strong> और <strong>KB / MB साइज</strong> में फोटो बना सकते हैं।</p>
 
 <h3>प्रमुख परीक्षाओं के लिए फोटो और सिग्नेचर साइज चार्ट</h3>
 <table class="exam-table">
-<thead>
-<tr>
-<th>परीक्षा / फॉर्म</th>
-<th>फोटो साइज (Dimensions)</th>
-<th>फाइल साइज (KB)</th>
-<th>DPI</th>
-</tr>
-</thead>
+<thead><tr><th>परीक्षा / फॉर्म</th><th>फोटो साइज</th><th>फाइल साइज</th><th>DPI</th></tr></thead>
 <tbody>
-<tr>
-<td><strong>SSC (CGL, CHSL, GD)</strong></td>
-<td>3.5 cm × 4.5 cm</td>
-<td>20 KB – 50 KB</td>
-<td>200 DPI</td>
-</tr>
-<tr>
-<td><strong>UPSC / State PSC</strong></td>
-<td>350 × 350 px से 1000 × 1000 px</td>
-<td>20 KB – 300 KB</td>
-<td>200 – 300 DPI</td>
-</tr>
-<tr>
-<td><strong>Railway (RRB NTPC / Group D)</strong></td>
-<td>3.5 cm × 4.5 cm (320 × 240 px)</td>
-<td>20 KB – 50 KB</td>
-<td>200 DPI</td>
-</tr>
-<tr>
-<td><strong>Signature (हस्ताक्षर)</strong></td>
-<td>4.0 cm × 2.0 cm (140 × 60 px)</td>
-<td>10 KB – 20 KB</td>
-<td>200 DPI</td>
-</tr>
-<tr>
-<td><strong>PAN Card (NSDL / UTI)</strong></td>
-<td>3.5 cm × 2.5 cm (213 × 213 px)</td>
-<td>20 KB – 50 KB</td>
-<td>200 – 300 DPI</td>
-</tr>
+<tr><td><strong>SSC (CGL, CHSL, GD)</strong></td><td>3.5 cm × 4.5 cm</td><td>20 KB – 50 KB</td><td>200 DPI</td></tr>
+<tr><td><strong>UPSC / State PSC</strong></td><td>350 × 350 से 1000 × 1000 px</td><td>20 KB – 300 KB</td><td>200–300 DPI</td></tr>
+<tr><td><strong>Railway (RRB)</strong></td><td>3.5 cm × 4.5 cm</td><td>20 KB – 50 KB</td><td>200 DPI</td></tr>
+<tr><td><strong>Signature (हस्ताक्षर)</strong></td><td>4.0 cm × 2.0 cm</td><td>10 KB – 20 KB</td><td>200 DPI</td></tr>
+<tr><td><strong>PAN Card</strong></td><td>3.5 cm × 2.5 cm</td><td>20 KB – 50 KB</td><td>200–300 DPI</td></tr>
 </tbody>
 </table>
 
-<h3>ResizeProblem का उपयोग करने के 4 आसान चरण</h3>
-<ul>
-<li><strong>स्टेप 1:</strong> "यहाँ क्लिक करके फोटो चुनें" पर टैप करें और अपनी गैलरी से फोटो या सिग्नेचर चुनें। जरूरत हो तो "क्रॉप करें (Crop)" बटन से फोटो काटें या घुमाएं।</li>
-<li><strong>स्टेप 2:</strong> Unit (Pixel, cm, या mm) चुनकर Width, Height और DPI (जैसे 200 DPI) भरें।</li>
-<li><strong>स्टेप 3:</strong> File Size Unit में <strong>KB</strong> या <strong>MB</strong> चुनें और ठीक जितना साइज चाहिए वह नंबर लिखें।</li>
-<li><strong>स्टेप 4:</strong> "फोटो तैयार करें" बटन दबाएं और <strong>DOWNLOAD JPG</strong> पर क्लिक करके तुरंत सेव करें।</li>
-</ul>
-
 <h3>अक्सर पूछे जाने वाले प्रश्न (FAQ)</h3>
-<div class="faq-item">
-<div class="faq-q">1. क्या मेरी फोटो किसी सर्वर पर अपलोड होती है?</div>
-<div class="faq-a">नहीं। ResizeProblem पूरी तरह आपके मोबाइल या कंप्यूटर ब्राउज़र के अंदर काम करता है। आपकी फोटो और सिग्नेचर कभी किसी बाहरी सर्वर पर नहीं भेजे जाते, इसलिए आपका डेटा 100% सुरक्षित रहता है।</div>
-</div>
-<div class="faq-item">
-<div class="faq-q">2. क्या इस टूल से 200 DPI या 300 DPI की फोटो बन सकती है?</div>
-<div class="faq-a">हाँ, आप DPI बॉक्स में 200 या 300 लिखकर असली JFIF DPI मेटाडेटा के साथ JPG फोटो डाउनलोड कर सकते हैं, जिसे सभी सरकारी वेबसाइटें स्वीकार करती हैं।</div>
-</div>
-<div class="faq-item">
-<div class="faq-q">3. क्या यह वेबसाइट और ऐप मोबाइल पर फ्री है?</div>
-<div class="faq-a">हाँ, यह टूल और मोबाइल ऐप सभी छात्रों और उपयोगकर्ताओं के लिए पूरी तरह मुफ्त है।</div>
-</div>
+<div class="faq-item"><div class="faq-q">1. क्या मेरी फोटो किसी सर्वर पर अपलोड होती है?</div><div class="faq-a">नहीं। सारी प्रोसेसिंग आपके मोबाइल ब्राउज़र में होती है, इसलिए आपका डेटा 100% सुरक्षित है।</div></div>
+<div class="faq-item"><div class="faq-q">2. क्या इस टूल से 200 DPI या 300 DPI की फोटो बन सकती है?</div><div class="faq-a">हाँ, असली JFIF DPI मेटाडेटा के साथ JPG फोटो बनती है।</div></div>
 
-<!-- FOOTER & ADSENSE COMPLIANCE LINKS -->
 <div class="footer-links">
 <button type="button" class="footer-link-btn" onclick="togglePolicy('about')">About Us</button>
 <button type="button" class="footer-link-btn" onclick="togglePolicy('privacy')">Privacy Policy</button>
@@ -570,42 +271,100 @@ Share / Save Image
 <button type="button" class="footer-link-btn" onclick="togglePolicy('contact')">Contact Us</button>
 </div>
 
-<div id="policy-about" class="policy-box">
-<strong>About ResizeProblem:</strong> ResizeProblem एक निःशुल्क ऑनलाइन इमेज और सिग्नेचर रिसाइज़र वेब टूल और मोबाइल ऐप है, जिसे विशेष रूप से विद्यार्थियों और नौकरी के आवेदकों की सुविधा के लिए बनाया गया है ताकि वे बिना किसी कठिन सॉफ्टवेयर के अपने दस्तावेज़ों को सही पिक्सल, DPI और KB/MB साइज में तैयार कर सकें।
-</div>
-
-<div id="policy-privacy" class="policy-box">
-<strong>Privacy Policy:</strong> हम आपकी गोपनीयता का पूरा सम्मान करते हैं। ResizeProblem पर अपलोड की गई कोई भी फोटो या दस्तावेज़ हमारे सर्वर पर सेव या स्टोर नहीं होता; सारी इमेज प्रोसेसिंग HTML5 Canvas तकनीक के माध्यम से सीधे आपके डिवाइस (Client-Side) पर होती है। भविष्य में वेबसाइट के संचालन के लिए Google AdSense जैसे तृतीय-पक्ष विज्ञापन नेटवर्क कुकीज़ (Cookies) का उपयोग कर सकते हैं।
-</div>
-
-<div id="policy-terms" class="policy-box">
-<strong>Terms & Conditions:</strong> यह टूल "जैसा है" (As-Is) के आधार पर मुफ्त उपयोग के लिए उपलब्ध है। कृपया किसी भी ऑनलाइन परीक्षा फॉर्म में फोटो अपलोड करने से पहले संबंधित आधिकारिक नोटिफिकेशन में दिए गए निर्देशों की जांच अवश्य कर लें।
-</div>
-
-<div id="policy-contact" class="policy-box">
-<strong>Contact Us:</strong> किसी भी सुझाव, तकनीकी सहायता या प्रश्न के लिए आप हमें हमारे आधिकारिक GitHub पेज (<strong>github.com/resizeproblem</strong>) या ईमेल (<strong>resizeproblem.help@gmail.com</strong>) के माध्यम से संपर्क कर सकते हैं।
-</div>
-
+<div id="policy-about" class="policy-box"><strong>About ResizeProblem:</strong> यह विद्यार्थियों और फॉर्म भरने वालों के लिए एक निःशुल्क फोटो व सिग्नेचर रिसाइज़र टूल है।</div>
+<div id="policy-privacy" class="policy-box"><strong>Privacy Policy:</strong> आपकी कोई भी फोटो हमारे सर्वर पर सेव नहीं होती; सारी प्रोसेसिंग आपके डिवाइस पर होती है।</div>
+<div id="policy-terms" class="policy-box"><strong>Terms & Conditions:</strong> कृपया फॉर्म में अपलोड करने से पहले आधिकारिक नोटिफिकेशन के निर्देशों की जांच अवश्य करें।</div>
+<div id="policy-contact" class="policy-box"><strong>Contact Us:</strong> किसी भी सहायता के लिए संपर्क करें: <strong>resizeproblem.help@gmail.com</strong></div>
 <p class="notice" style="margin-top:16px">© 2026 ResizeProblem — All Rights Reserved</p>
 </section>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
-
 <script>
 'use strict';
-
 const $ = id => document.getElementById(id);
 
-// SERVICE WORKER REGISTRATION & APP INSTALL LOGIC
 if ('serviceWorker' in navigator) {
-window.addEventListener('load', () => {
-navigator.serviceWorker.register('sw.js').catch(() => {});
-});
+window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 
 let deferredPrompt = null;
 const installAppBtn = $('installAppBtn');
 const APK_DOWNLOAD_URL = 'https://github.com/resizeproblem/resizeproblem/releases/download/v1.0/app-release-signed.apk';
 
-window.addEventListene
+window.addEventListener('beforeinstallprompt', e => {
+e.preventDefault();
+deferredPrompt = e;
+installAppBtn.textContent = '📲 Install App';
+});
+
+window.addEventListener('appinstalled', () => {
+deferredPrompt = null;
+$('appBanner').style.display = 'none';
+});
+
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+$('appBanner').style.display = 'none';
+}
+
+installAppBtn.addEventListener('click', async () => {
+if (deferredPrompt) {
+deferredPrompt.prompt();
+const res = await deferredPrompt.userChoice;
+if (res.outcome === 'accepted') deferredPrompt = null;
+} else {
+$('customModalMsg').textContent =
+'📲 ResizeProblem ऐप अपने फोन में इंस्टॉल करें:\n\n' +
+'तरीका 1 (सबसे आसान — 5 सेकंड):\n' +
+'• ब्राउज़र में ऊपर दाईं तरफ (⋮) दबाएं।\n' +
+'• "Install app" या "Add to Home screen" पर टैप करें।\n\n' +
+'तरीका 2 (Android APK डाउनलोड):\n' +
+'• नीचे हरे बटन से सीधे Android APK फाइल डाउनलोड करें।';
+$('customModalActions').innerHTML =
+'<a href="' + APK_DOWNLOAD_URL + '" class="modal-btn modal-btn-apk" target="_blank" rel="noopener">⬇ Download Android APK</a>' +
+'<button type="button" class="modal-btn" id="customModalClose">ठीक है</button>';
+$('customModal').style.display = 'flex';
+$('customModalClose').onclick = () => $('customModal').style.display = 'none';
+}
+});
+
+function togglePolicy(type) {
+['about', 'privacy', 'terms', 'contact'].forEach(id => {
+const el = $('policy-' + id);
+el.style.display = (id === type && el.style.display !== 'block') ? 'block' : 'none';
+});
+}
+
+let cropper = null, isCropActive = false, currentRotation = 0, originalObjectUrl = null, currentObjectUrl = null, finalImageBlob = null, finalFileName = 'ResizeProblem.jpg', isRatioLocked = false, originalWidth = 0, originalHeight = 0, lastLoadedKey = '';
+
+const fileInput = $('fileInput'), imageToCrop = $('imageToCrop'), cropperContainerBox = $('cropperContainerBox'), resultStatus = $('resultStatus'), directDownloadLink = $('directDownloadLink'), finalPreviewImg = $('finalPreviewImg'), processBtn = $('processBtn'), toggleCropBtn = $('toggleCropBtn'), lockRatioBtn = $('lockRatioBtn');
+
+function showMessage(message) {
+$('customModalMsg').textContent = message;
+$('customModalActions').innerHTML = '<button type="button" class="modal-btn" id="customModalClose">ठीक है</button>';
+$('customModal').style.display = 'flex';
+$('customModalClose').onclick = () => $('customModal').style.display = 'none';
+}
+
+$('customModalClose').onclick = () => $('customModal').style.display = 'none';
+$('customModal').onclick = e => { if (e.target === $('customModal')) $('customModal').style.display = 'none'; };
+
+function clearOutput() {
+if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+currentObjectUrl = null; finalImageBlob = null;
+finalPreviewImg.removeAttribute('src');
+directDownloadLink.removeAttribute('href');
+directDownloadLink.style.pointerEvents = 'none';
+directDownloadLink.style.opacity = '.5';
+resultStatus.style.display = 'none';
+}
+
+function formatBytes(bytes) {
+return bytes >= 1048576 ? (bytes / 1048576).toFixed(2) + ' MB' : (bytes / 1024).toFixed(2) + ' KB';
+}
+
+function disableCropMode() {
+if (cropper) { cropper.destroy(); cropper = null; }
+isCropActive = false; isRatioLocked = false;
+toggleCropBtn.textContent = '✂️ क्रॉप करें (Crop)';
+toggleCropBtn.cla
