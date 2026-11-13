@@ -1,17 +1,20 @@
 {
+  "id": "/resizeproblem/",
   "name": "ResizeProblem - Photo & Signature Resizer",
   "short_name": "ResizeProblem",
   "description": "Free Photo & Signature Resizer for SSC, UPSC, Railway & Govt Forms",
   "start_url": "/resizeproblem/",
   "scope": "/resizeproblem/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#1e3a8a",
   "theme_color": "#1e3a8a",
   "icons": [
     {
-      "src": "logo.jpg",
+      "src": "logo.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
