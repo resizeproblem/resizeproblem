@@ -6,7 +6,37 @@
 <meta name="theme-color" content="#2563eb">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>ResizeProblem - Photo Resizer</title>
+
+<!-- SEO Meta Tags -->
+<title>ResizeProblem - Free Photo & Signature Resizer (Exact KB, MB & DPI)</title>
+<meta name="description" content="ResizeProblem is a free online photo and signature resizer tool for SSC, UPSC, Railway, IBPS, and PAN card forms. Resize images to exact KB, MB, pixels (px, cm, mm), and 200/300 DPI online on mobile.">
+<meta name="keywords" content="photo resizer 50kb, signature resizer 20kb, ssc photo resizer, upsc photo dpi converter, image compressor exact kb mb, resizeproblem">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://resizeproblem.github.io/resizeproblem/">
+
+<!-- Open Graph for Social Sharing -->
+<meta property="og:title" content="ResizeProblem - Online Photo & Signature Resizer (KB/MB & DPI)">
+<meta property="og:description" content="मोबाइल से सरकारी फॉर्म (SSC, UPSC, Railway) के लिए फोटो और सिग्नेचर को ठीक KB/MB और 200/300 DPI में बनाएं।">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://resizeproblem.github.io/resizeproblem/">
+
+<!-- Structured Data (FAQ Schema for Google Ranking) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "ResizeProblem",
+  "url": "https://resizeproblem.github.io/resizeproblem/",
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "All",
+  "description": "Free online photo and signature resizer for exact KB, MB, pixels, cm, mm, and DPI.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "INR"
+  }
+}
+</script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
 
@@ -23,12 +53,12 @@
 body{
 margin:0;padding:12px;background:var(--bg);
 color:var(--text);font-family:Arial,sans-serif;
-line-height:1.5
+line-height:1.6
 }
-.container{max-width:620px;margin:10px auto}
+.container{max-width:650px;margin:10px auto}
 .card{
 background:white;padding:20px;border-radius:16px;
-box-shadow:0 4px 15px #00000012
+box-shadow:0 4px 15px #00000012;margin-bottom:18px
 }
 .header{text-align:center;margin-bottom:22px}
 .header h1{margin:0;color:var(--primary);font-size:28px}
@@ -59,10 +89,14 @@ font-size:13px;text-align:center
 }
 .cropper-container-box{display:none;margin-top:12px}
 .cropper-wrapper{
-position:relative;width:100%;height:360px;
-overflow:hidden;background:#0f172a;border-radius:10px
+position:relative;width:100%;min-height:220px;max-height:360px;
+overflow:hidden;background:#0f172a;border-radius:10px;
+display:flex;align-items:center;justify-content:center
 }
-.cropper-wrapper img{display:block;max-width:100%}
+.cropper-wrapper img{
+display:block;max-width:100%;max-height:360px;margin:auto;
+pointer-events:none;user-select:none;-webkit-user-select:none
+}
 .crop-tools{
 display:flex;flex-wrap:wrap;justify-content:center;
 gap:7px;margin-top:10px
@@ -71,6 +105,9 @@ gap:7px;margin-top:10px
 border:0;background:#e2e8f0;color:var(--text);
 padding:10px 12px;border-radius:7px;font-weight:bold;
 cursor:pointer
+}
+.tool-btn.active-btn{
+background:var(--primary);color:white
 }
 hr{border:0;border-top:1px solid var(--border);margin:22px 0}
 .input-grid-3{
@@ -131,6 +168,49 @@ margin:auto;border:1px solid var(--border);
 user-select:auto;-webkit-touch-callout:default
 }
 .notice{text-align:center;margin-top:12px}
+
+/* SEO Content & Policy Sections */
+.seo-section h2{
+font-size:19px;color:var(--primary);margin:0 0 10px 0
+}
+.seo-section h3{
+font-size:16px;color:var(--text);margin:16px 0 6px 0
+}
+.seo-section p,.seo-section li{
+font-size:14px;color:#334155;margin-bottom:8px
+}
+.seo-section ul{
+padding-left:20px;margin:8px 0
+}
+.exam-table{
+width:100%;border-collapse:collapse;margin:12px 0;font-size:13px
+}
+.exam-table th,.exam-table td{
+border:1px solid var(--border);padding:8px;text-align:left
+}
+.exam-table th{
+background:#eff6ff;color:var(--text)
+}
+.faq-item{
+border-bottom:1px solid #e2e8f0;padding:10px 0
+}
+.faq-item:last-child{border-bottom:0}
+.faq-q{font-weight:bold;font-size:14px;color:var(--text);margin-bottom:4px}
+.faq-a{font-size:13px;color:#475569}
+
+.footer-links{
+display:flex;flex-wrap:wrap;justify-content:center;gap:12px;
+margin-top:14px;padding-top:14px;border-top:1px solid var(--border)
+}
+.footer-link-btn{
+background:none;border:0;color:var(--primary);
+font-size:13px;font-weight:bold;cursor:pointer;text-decoration:underline;padding:4px
+}
+.policy-box{
+display:none;background:#f8fafc;border:1px solid var(--border);
+border-radius:10px;padding:14px;margin-top:12px;font-size:13px;color:#334155
+}
+
 .modal-overlay{
 display:none;position:fixed;inset:0;background:#0f172a99;
 z-index:9999;align-items:center;justify-content:center;padding:16px
@@ -148,7 +228,7 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 .input-grid-3{grid-template-columns:1fr 1fr}
 .input-grid-3>div:first-child{grid-column:1/-1}
 .status-grid{grid-template-columns:1fr 1fr}
-.cropper-wrapper{height:320px}
+.cropper-wrapper{max-height:320px}
 .card{padding:15px}
 }
 </style>
@@ -164,6 +244,7 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 </div>
 
 <main class="container">
+<!-- MAIN TOOL CARD -->
 <section class="card">
 
 <header class="header">
@@ -193,21 +274,21 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 <div id="originalFileSize">-</div>
 </div>
 
-<!-- CROPPER -->
+<!-- IMAGE PREVIEW & ON-DEMAND CROPPER -->
 <div class="cropper-container-box" id="cropperContainerBox">
 
 <div class="cropper-wrapper">
-<img id="imageToCrop" alt="Crop Photo">
+<img id="imageToCrop" alt="Uploaded Photo">
 </div>
 
 <div class="crop-tools">
+<button class="tool-btn active-btn" type="button" id="toggleCropBtn">✂️ क्रॉप करें (Crop)</button>
 <button class="tool-btn" type="button" id="rotateLeftBtn">↺ बाएं घुमाएं</button>
 <button class="tool-btn" type="button" id="rotateRightBtn">↻ दाएं घुमाएं</button>
-<button class="tool-btn" type="button" id="freeCropBtn">Free Crop</button>
-<button class="tool-btn" type="button" id="lockRatioBtn">Ratio Lock</button>
+<button class="tool-btn" type="button" id="lockRatioBtn" style="display:none">Ratio Lock</button>
 </div>
 
-<p class="notice">फोटो को खींचकर अपना मनचाहा हिस्सा Crop करें।</p>
+<p class="notice" id="cropHintText">फोटो सुरक्षित है — हाथ से छूने पर नहीं हिलेगी। क्रॉप करने के लिए ऊपर "✂️ क्रॉप करें" बटन दबाएं।</p>
 </div>
 
 <hr>
@@ -254,7 +335,7 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 <div>
 <label class="field-label" for="qualityInput">JPEG Quality</label>
 <select id="qualityInput">
-<option value="auto">Automatic</option>
+<option value="auto">Automatic (Best Quality)</option>
 <option value="high">High Quality</option>
 <option value="medium">Medium Quality</option>
 <option value="low">Low Size</option>
@@ -288,7 +369,7 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 </div>
 
 <p class="notice">
-जितना KB या MB आप डालेंगे, फोटो ठीक उतने ही साइज में तैयार होकर डाउनलोड होगी।
+जितना KB या MB आप डालेंगे, फोटो की क्वालिटी और पिक्सल बचाते हुए ठीक उतने ही साइज में डाउनलोड होगी।
 </p>
 
 <hr>
@@ -355,8 +436,106 @@ Share / Save Image
 + अगली फोटो अपलोड करें
 </button>
 
-<p class="notice">ResizeProblem — Mobile Photo Resizer</p>
+</section>
 
+<!-- SEO GUIDE & EXAM REQUIREMENTS SECTION -->
+<section class="card seo-section">
+<h2>सरकारी फॉर्म (SSC, UPSC, Railway, PAN Card) के लिए फोटो और सिग्नेचर कैसे बनाएं?</h2>
+<p>
+<strong>ResizeProblem</strong> एक मुफ्त और तेज़ ऑनलाइन फोटो व सिग्नेचर रिसाइज़र टूल है। जब आप किसी भी सरकारी नौकरी (जैसे SSC CGL, CHSL, GD, UPSC, IBPS, Railway RRB, Police भर्ती) या PAN Card व पासपोर्ट का ऑनलाइन फॉर्म भरते हैं, तो वेबसाइट पर फोटो और हस्ताक्षर (Signature) के लिए निश्चित <strong>Width, Height (px/cm/mm), DPI (200 या 300 DPI)</strong> और <strong>KB / MB साइज</strong> मांगा जाता है।
+</p>
+
+<h3>प्रमुख परीक्षाओं के लिए फोटो और सिग्नेचर साइज चार्ट</h3>
+<table class="exam-table">
+<thead>
+<tr>
+<th>परीक्षा / फॉर्म</th>
+<th>फोटो साइज (Dimensions)</th>
+<th>फाइल साइज (KB)</th>
+<th>DPI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SSC (CGL, CHSL, GD)</strong></td>
+<td>3.5 cm × 4.5 cm</td>
+<td>20 KB – 50 KB</td>
+<td>200 DPI</td>
+</tr>
+<tr>
+<td><strong>UPSC / State PSC</strong></td>
+<td>350 × 350 px से 1000 × 1000 px</td>
+<td>20 KB – 300 KB</td>
+<td>200 – 300 DPI</td>
+</tr>
+<tr>
+<td><strong>Railway (RRB NTPC / Group D)</strong></td>
+<td>3.5 cm × 4.5 cm (320 × 240 px)</td>
+<td>20 KB – 50 KB</td>
+<td>200 DPI</td>
+</tr>
+<tr>
+<td><strong>Signature (हस्ताक्षर)</strong></td>
+<td>4.0 cm × 2.0 cm (140 × 60 px)</td>
+<td>10 KB – 20 KB</td>
+<td>200 DPI</td>
+</tr>
+<tr>
+<td><strong>PAN Card (NSDL / UTI)</strong></td>
+<td>3.5 cm × 2.5 cm (213 × 213 px)</td>
+<td>20 KB – 50 KB</td>
+<td>200 – 300 DPI</td>
+</tr>
+</tbody>
+</table>
+
+<h3>ResizeProblem का उपयोग करने के 4 आसान चरण</h3>
+<ul>
+<li><strong>स्टेप 1:</strong> "यहाँ क्लिक करके फोटो चुनें" पर टैप करें और अपनी गैलरी से फोटो या सिग्नेचर चुनें। जरूरत हो तो "क्रॉप करें (Crop)" बटन से फोटो काटें या घुमाएं।</li>
+<li><strong>स्टेप 2:</strong> Unit (Pixel, cm, या mm) चुनकर Width, Height और DPI (जैसे 200 DPI) भरें।</li>
+<li><strong>स्टेप 3:</strong> File Size Unit में <strong>KB</strong> या <strong>MB</strong> चुनें और ठीक जितना साइज चाहिए वह नंबर लिखें।</li>
+<li><strong>स्टेप 4:</strong> "फोटो तैयार करें" बटन दबाएं और <strong>DOWNLOAD JPG</strong> पर क्लिक करके तुरंत सेव करें।</li>
+</ul>
+
+<h3>अक्सर पूछे जाने वाले प्रश्न (FAQ)</h3>
+<div class="faq-item">
+<div class="faq-q">1. क्या मेरी फोटो किसी सर्वर पर अपलोड होती है?</div>
+<div class="faq-a">नहीं। ResizeProblem पूरी तरह आपके मोबाइल या कंप्यूटर ब्राउज़र के अंदर काम करता है। आपकी फोटो और सिग्नेचर कभी किसी बाहरी सर्वर पर नहीं भेजे जाते, इसलिए आपका डेटा 100% सुरक्षित रहता है।</div>
+</div>
+<div class="faq-item">
+<div class="faq-q">2. क्या इस टूल से 200 DPI या 300 DPI की फोटो बन सकती है?</div>
+<div class="faq-a">हाँ, आप DPI बॉक्स में 200 या 300 लिखकर असली JFIF DPI मेटाडेटा के साथ JPG फोटो डाउनलोड कर सकते हैं, जिसे सभी सरकारी वेबसाइटें स्वीकार करती हैं।</div>
+</div>
+<div class="faq-item">
+<div class="faq-q">3. क्या यह वेबसाइट मोबाइल पर फ्री है?</div>
+<div class="faq-a">हाँ, यह टूल सभी छात्रों और उपयोगकर्ताओं के लिए पूरी तरह मुफ्त है।</div>
+</div>
+
+<!-- FOOTER & ADSENSE COMPLIANCE LINKS -->
+<div class="footer-links">
+<button type="button" class="footer-link-btn" onclick="togglePolicy('about')">About Us</button>
+<button type="button" class="footer-link-btn" onclick="togglePolicy('privacy')">Privacy Policy</button>
+<button type="button" class="footer-link-btn" onclick="togglePolicy('terms')">Terms & Conditions</button>
+<button type="button" class="footer-link-btn" onclick="togglePolicy('contact')">Contact Us</button>
+</div>
+
+<div id="policy-about" class="policy-box">
+<strong>About ResizeProblem:</strong> ResizeProblem एक निःशुल्क ऑनलाइन इमेज और सिग्नेचर रिसाइज़र वेब टूल है, जिसे विशेष रूप से विद्यार्थियों और नौकरी के आवेदकों की सुविधा के लिए बनाया गया है ताकि वे बिना किसी कठिन सॉफ्टवेयर के अपने दस्तावेज़ों को सही पिक्सल, DPI और KB/MB साइज में तैयार कर सकें।
+</div>
+
+<div id="policy-privacy" class="policy-box">
+<strong>Privacy Policy:</strong> हम आपकी गोपनीयता का पूरा सम्मान करते हैं। ResizeProblem पर अपलोड की गई कोई भी फोटो या दस्तावेज़ हमारे सर्वर पर सेव या स्टोर नहीं होता; सारी इमेज प्रोसेसिंग HTML5 Canvas तकनीक के माध्यम से सीधे आपके डिवाइस (Client-Side) पर होती है। भविष्य में वेबसाइट के संचालन के लिए Google AdSense जैसे तृतीय-पक्ष विज्ञापन नेटवर्क कुकीज़ (Cookies) का उपयोग कर सकते हैं।
+</div>
+
+<div id="policy-terms" class="policy-box">
+<strong>Terms & Conditions:</strong> यह टूल "जैसा है" (As-Is) के आधार पर मुफ्त उपयोग के लिए उपलब्ध है। कृपया किसी भी ऑनलाइन परीक्षा फॉर्म में फोटो अपलोड करने से पहले संबंधित आधिकारिक नोटिफिकेशन में दिए गए निर्देशों की जांच अवश्य कर लें।
+</div>
+
+<div id="policy-contact" class="policy-box">
+<strong>Contact Us:</strong> किसी भी सुझाव, तकनीकी सहायता या प्रश्न के लिए आप हमें हमारे आधिकारिक GitHub पेज (<strong>github.com/resizeproblem</strong>) या ईमेल (<strong>resizeproblem.help@gmail.com</strong>) के माध्यम से संपर्क कर सकते हैं।
+</div>
+
+<p class="notice" style="margin-top:16px">© 2026 ResizeProblem — All Rights Reserved</p>
 </section>
 </main>
 
@@ -367,7 +546,20 @@ Share / Save Image
 
 const $ = id => document.getElementById(id);
 
+function togglePolicy(type) {
+['about', 'privacy', 'terms', 'contact'].forEach(id => {
+const el = $('policy-' + id);
+if (id === type) {
+el.style.display = el.style.display === 'block' ? 'none' : 'block';
+} else {
+el.style.display = 'none';
+}
+});
+}
+
 let cropper = null;
+let isCropActive = false;
+let currentRotation = 0;
 let originalObjectUrl = null;
 let currentObjectUrl = null;
 let finalImageBlob = null;
@@ -384,6 +576,8 @@ const resultStatus = $('resultStatus');
 const directDownloadLink = $('directDownloadLink');
 const finalPreviewImg = $('finalPreviewImg');
 const processBtn = $('processBtn');
+const toggleCropBtn = $('toggleCropBtn');
+const lockRatioBtn = $('lockRatioBtn');
 
 function showMessage(message) {
 $('customModalMsg').textContent = message;
@@ -418,6 +612,56 @@ if (bytes >= 1024 * 1024) {
 return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
 }
 return (bytes / 1024).toFixed(2) + ' KB';
+}
+
+function disableCropMode() {
+if (cropper) {
+cropper.destroy();
+cropper = null;
+}
+isCropActive = false;
+isRatioLocked = false;
+toggleCropBtn.textContent = '✂️ क्रॉप करें (Crop)';
+toggleCropBtn.classList.add('active-btn');
+lockRatioBtn.style.display = 'none';
+lockRatioBtn.textContent = 'Ratio Lock';
+imageToCrop.style.pointerEvents = 'none';
+imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
+$('cropHintText').textContent = 'फोटो सुरक्षित है — हाथ से छूने पर नहीं हिलेगी। क्रॉप करने के लिए ऊपर "✂️ क्रॉप करें" बटन दबाएं।';
+}
+
+function enableCropMode() {
+if (typeof Cropper === 'undefined') {
+showMessage('Cropper लाइब्रेरी लोड नहीं हुई। इंटरनेट चालू करें और पेज Refresh करें।');
+return;
+}
+isCropActive = true;
+imageToCrop.style.transform = 'none';
+imageToCrop.style.pointerEvents = 'auto';
+toggleCropBtn.textContent = '✖ क्रॉप बंद करें';
+toggleCropBtn.classList.remove('active-btn');
+lockRatioBtn.style.display = 'inline-block';
+$('cropHintText').textContent = 'क्रॉप बॉक्स के सफेद कोनों को खींचकर हिस्सा चुनें (पीछे की फोटो लॉक है)।';
+
+cropper = new Cropper(imageToCrop, {
+viewMode: 1,
+dragMode: 'none',
+autoCropArea: 0.9,
+responsive: true,
+background: false,
+zoomable: false,
+zoomOnWheel: false,
+zoomOnTouch: false,
+movable: false,
+rotatable: true,
+scalable: false,
+aspectRatio: NaN,
+ready() {
+if (currentRotation !== 0) {
+cropper.rotateTo(currentRotation);
+}
+}
+});
 }
 
 function getDimensions() {
@@ -475,8 +719,9 @@ $('pixelPreview').textContent = e.message;
 
 $('unitSelect').addEventListener('change', () => {
 const u = $('unitSelect').value;
-const baseW = originalWidth || 350;
-const baseH = originalHeight || 450;
+const isRotated = Math.abs(currentRotation % 360) === 90 || Math.abs(currentRotation % 360) === 270;
+const baseW = (isRotated ? originalHeight : originalWidth) || 350;
+const baseH = (isRotated ? originalWidth : originalHeight) || 450;
 const dpi = Number($('dpiInput').value) || 200;
 
 if (u === 'cm') {
@@ -496,7 +741,7 @@ updatePixelPreview();
 el.addEventListener('input', updatePixelPreview);
 });
 
-function initCropperWithSource(srcUrl, file) {
+function loadPreviewImage(srcUrl, file) {
 cropperContainerBox.style.display = 'block';
 $('originalInfo').style.display = 'block';
 
@@ -514,34 +759,8 @@ originalWidth + ' × ' + originalHeight + ' Pixels';
 $('originalFileSize').textContent =
 'Original File Size: ' + formatBytes(file.size);
 
-isRatioLocked = false;
-$('lockRatioBtn').textContent = 'Ratio Lock';
 updatePixelPreview();
-
-if (typeof Cropper === 'undefined') {
 $('nextPhotoBtn').style.display = 'block';
-return;
-}
-
-try {
-cropper = new Cropper(imageToCrop, {
-viewMode: 1,
-dragMode: 'crop',
-autoCropArea: 0.9,
-responsive: true,
-background: false,
-zoomOnWheel: false,
-movable: true,
-rotatable: true,
-scalable: false,
-aspectRatio: NaN,
-ready() {
-$('nextPhotoBtn').style.display = 'block';
-}
-});
-} catch (err) {
-$('nextPhotoBtn').style.display = 'block';
-}
 };
 
 imageToCrop.onerror = () => {
@@ -578,11 +797,8 @@ lastLoadedKey = '';
 return;
 }
 
-if (cropper) {
-cropper.destroy();
-cropper = null;
-}
-
+currentRotation = 0;
+disableCropMode();
 clearOutput();
 
 if (originalObjectUrl) {
@@ -592,10 +808,10 @@ originalObjectUrl = null;
 
 try {
 originalObjectUrl = URL.createObjectURL(file);
-initCropperWithSource(originalObjectUrl, file);
+loadPreviewImage(originalObjectUrl, file);
 } catch (e) {
 const reader = new FileReader();
-reader.onload = () => initCropperWithSource(reader.result, file);
+reader.onload = () => loadPreviewImage(reader.result, file);
 reader.readAsDataURL(file);
 }
 }
@@ -611,39 +827,87 @@ handleSelectedFile(fileInput.files[0]);
 }
 });
 
-// CROP BUTTONS
-$('rotateLeftBtn').addEventListener('click', () => {
-if (cropper) cropper.rotate(-90);
+// TOGGLE CROP ONLY WHEN BUTTON IS CLICKED
+toggleCropBtn.addEventListener('click', () => {
+if (!imageToCrop.src) return;
+if (!isCropActive) {
+enableCropMode();
+} else {
+disableCropMode();
+}
 });
 
-$('rotateRightBtn').addEventListener('click', () => {
-if (cropper) cropper.rotate(90);
-});
+// ROTATE BUTTONS
+function rotateImage(delta) {
+currentRotation = (currentRotation + delta) % 360;
+if (cropper && isCropActive) {
+cropper.rotate(delta);
+} else {
+imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
+}
+if (originalWidth > 0 && originalHeight > 0 && $('unitSelect').value === 'px') {
+const isRotated = Math.abs(currentRotation % 360) === 90 || Math.abs(currentRotation % 360) === 270;
+$('widthInput').value = isRotated ? originalHeight : originalWidth;
+$('heightInput').value = isRotated ? originalWidth : originalHeight;
+updatePixelPreview();
+}
+}
 
-$('freeCropBtn').addEventListener('click', () => {
-if (!cropper) return;
-isRatioLocked = false;
-cropper.setAspectRatio(NaN);
-$('lockRatioBtn').textContent = 'Ratio Lock';
-});
+$('rotateLeftBtn').addEventListener('click', () => rotateImage(-90));
+$('rotateRightBtn').addEventListener('click', () => rotateImage(90));
 
-$('lockRatioBtn').addEventListener('click', () => {
-if (!cropper) return;
+lockRatioBtn.addEventListener('click', () => {
+if (!cropper || !isCropActive) return;
 isRatioLocked = !isRatioLocked;
 if (isRatioLocked) {
 try {
 const d = getDimensions();
 cropper.setAspectRatio(d.width / d.height);
-$('lockRatioBtn').textContent = 'Ratio Unlock';
+lockRatioBtn.textContent = 'Ratio Unlock';
 } catch (e) {
 isRatioLocked = false;
 showMessage(e.message);
 }
 } else {
 cropper.setAspectRatio(NaN);
-$('lockRatioBtn').textContent = 'Ratio Lock';
+lockRatioBtn.textContent = 'Ratio Lock';
 }
 });
+
+// BUILD HIGH-QUALITY TARGET CANVAS
+function buildHighQualityCanvas(targetW, targetH) {
+if (cropper && isCropActive) {
+return cropper.getCroppedCanvas({
+width: targetW,
+height: targetH,
+fillColor: '#FFFFFF',
+imageSmoothingEnabled: true,
+imageSmoothingQuality: 'high'
+});
+}
+
+const canvas = document.createElement('canvas');
+canvas.width = targetW;
+canvas.height = targetH;
+const ctx = canvas.getContext('2d', { alpha: false });
+ctx.fillStyle = '#FFFFFF';
+ctx.fillRect(0, 0, targetW, targetH);
+ctx.imageSmoothingEnabled = true;
+ctx.imageSmoothingQuality = 'high';
+
+ctx.save();
+ctx.translate(targetW / 2, targetH / 2);
+ctx.rotate((currentRotation * Math.PI) / 180);
+
+const norm = Math.abs(currentRotation % 360);
+if (norm === 90 || norm === 270) {
+ctx.drawImage(imageToCrop, -targetH / 2, -targetW / 2, targetH, targetW);
+} else {
+ctx.drawImage(imageToCrop, -targetW / 2, -targetH / 2, targetW, targetH);
+}
+ctx.restore();
+return canvas;
+}
 
 // JPEG CONVERSION
 function canvasToBlob(canvas, quality) {
@@ -655,16 +919,12 @@ else reject(new Error('JPEG बनाने में समस्या हु�
 });
 }
 
-function getQualities() {
+function getQualityBounds() {
 const mode = $('qualityInput').value;
-if (mode === 'high') return [0.98,0.94,0.90,0.85,0.80,0.75,0.70,0.65];
-if (mode === 'medium') return [0.82,0.76,0.70,0.65,0.60,0.55,0.50,0.45];
-if (mode === 'low') return [0.55,0.48,0.42,0.36,0.30,0.24,0.18,0.12,0.06];
-return [
-0.98,0.95,0.92,0.88,0.84,0.80,0.75,0.70,0.65,
-0.60,0.55,0.50,0.45,0.40,0.35,0.30,0.25,0.20,
-0.15,0.10,0.06,0.03
-];
+if (mode === 'high') return { minQ: 0.72, maxQ: 0.99 };
+if (mode === 'medium') return { minQ: 0.45, maxQ: 0.88 };
+if (mode === 'low') return { minQ: 0.25, maxQ: 0.65 };
+return { minQ: 0.15, maxQ: 0.99 };
 }
 
 function getTargetBytes() {
@@ -721,27 +981,35 @@ exact.set(src, 0);
 return new Blob([exact], { type: 'image/jpeg' });
 }
 
-// EXACT SIZE COMPRESSION (KEEPING CHOSEN PIXELS)
-async function compressToExactSize(sourceCanvas, targetBytes) {
-const qualities = getQualities();
-let bestUnder = null;
-let smallest = null;
+async function encodeCrispTargetBlob(canvas, targetBytes, dpi) {
+const { minQ, maxQ } = getQualityBounds();
+let low = minQ;
+let high = maxQ;
+let bestBlob = null;
 
-for (const q of qualities) {
-const blob = await canvasToBlob(sourceCanvas, q);
-if (!smallest || blob.size < smallest.size) {
-smallest = blob;
-}
-if (blob.size <= targetBytes - 32) {
-bestUnder = blob;
-break;
+for (let i = 0; i < 16; i++) {
+const mid = (low + high) / 2;
+const raw = await canvasToBlob(canvas, mid);
+const withDpi = await addJfifDpi(raw, dpi);
+
+if (withDpi.size <= targetBytes) {
+bestBlob = withDpi;
+low = mid;
+} else {
+high = mid;
 }
 }
 
-if (bestUnder) {
-return { blob: bestUnder, metTarget: true };
+if (!bestBlob) {
+const fallbackRaw = await canvasToBlob(canvas, minQ);
+bestBlob = await addJfifDpi(fallbackRaw, dpi);
 }
-return { blob: smallest, metTarget: false };
+
+if (bestBlob.size < targetBytes) {
+bestBlob = await padBlobToExactBytes(bestBlob, targetBytes);
+}
+
+return bestBlob;
 }
 
 // PROCESS BUTTON
@@ -759,35 +1027,12 @@ const d = getDimensions();
 const targetBytes = getTargetBytes();
 const dpi = Number($('dpiInput').value);
 
-let sourceCanvas = null;
-if (cropper) {
-sourceCanvas = cropper.getCroppedCanvas({
-width: d.width,
-height: d.height,
-fillColor: '#FFFFFF',
-imageSmoothingEnabled: true,
-imageSmoothingQuality: 'high'
-});
-} else {
-sourceCanvas = document.createElement('canvas');
-sourceCanvas.width = d.width;
-sourceCanvas.height = d.height;
-const ctx = sourceCanvas.getContext('2d', { alpha: false });
-ctx.fillStyle = '#FFFFFF';
-ctx.fillRect(0, 0, d.width, d.height);
-ctx.drawImage(imageToCrop, 0, 0, d.width, d.height);
-}
-
+const sourceCanvas = buildHighQualityCanvas(d.width, d.height);
 if (!sourceCanvas) {
 throw new Error('Canvas तैयार नहीं हो सका।');
 }
 
-const compressed = await compressToExactSize(sourceCanvas, targetBytes);
-let finalBlob = await addJfifDpi(compressed.blob, dpi);
-
-if (finalBlob.size < targetBytes) {
-finalBlob = await padBlobToExactBytes(finalBlob, targetBytes);
-}
+const finalBlob = await encodeCrispTargetBlob(sourceCanvas, targetBytes, dpi);
 
 clearOutput();
 
@@ -815,11 +1060,11 @@ const exactMatch = finalBlob.size === targetBytes;
 
 $('statusHeader').textContent = exactMatch
 ? '✓ आपकी फोटो ठीक ' + formatBytes(finalBlob.size) + ' में तैयार है!'
-: '✓ फोटो तैयार है (न्यूनतम संभव साइज)।';
+: '✓ आपकी फोटो उच्च क्वालिटी में तैयार है!';
 
 $('resultNote').textContent = exactMatch
-? 'फोटो आपके चुने गए Exact File Size (' + finalBlob.size + ' Bytes) में तैयार है।'
-: 'पिक्सल अधिक होने के कारण इससे छोटी फाइल संभव नहीं है।';
+? 'फोटो साफ क्वालिटी और आपके चुने गए Exact Size (' + finalBlob.size + ' Bytes) में तैयार है।'
+: 'फोटो की साफ क्वालिटी बचाने के लिए न्यूनतम संभव फाइल तैयार की गई है।';
 
 resultStatus.style.display = 'block';
 resultStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -869,10 +1114,8 @@ showMessage('Share नहीं हो सका। Download JPG बटन स�
 
 // NEXT PHOTO
 $('nextPhotoBtn').addEventListener('click', () => {
-if (cropper) {
-cropper.destroy();
-cropper = null;
-}
+currentRotation = 0;
+disableCropMode();
 clearOutput();
 imageToCrop.removeAttribute('src');
 cropperContainerBox.style.display = 'none';
