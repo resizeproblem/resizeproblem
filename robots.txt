@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://resizeproblem.github.io/resizeproblem/sitemap.xml
