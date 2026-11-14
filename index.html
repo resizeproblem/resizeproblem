@@ -1166,6 +1166,11 @@ if (originalObjectUrl) URL.revokeObjectURL(originalObjectUrl);
 updatePixelPreview();
 </script>
   <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }</script>
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+  const banner = document.querySelector('.app-banner');
+  if (banner) banner.style.display = 'none';
+}
+  </script>
   
 </body>
 </html>
