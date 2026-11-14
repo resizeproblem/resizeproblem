@@ -8,6 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="logo.png">
   
 <!-- SEO Meta Tags -->
 <title>ResizeProblem - Free Photo & Signature Resizer (Exact KB, MB & DPI)</title>
@@ -62,9 +63,23 @@ line-height:1.6
 background:white;padding:20px;border-radius:16px;
 box-shadow:0 4px 15px #00000012;margin-bottom:18px
 }
-.header{text-align:center;margin-bottom:22px}
+.header{text-align:center;margin-bottom:16px}
 .header h1{margin:0;color:var(--primary);font-size:28px}
 .header p,.notice{font-size:13px;color:var(--muted)}
+.app-banner{
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+color:white;border-radius:12px;padding:12px;margin-bottom:18px;
+display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.app-banner-left{display:flex;align-items:center;gap:10px;text-align:left}
+.app-banner-left img{width:42px;height:42px;border-radius:10px;background:white;object-fit:cover;flex:none}
+.app-banner-title{font-weight:bold;font-size:14px;line-height:1.2}
+.app-banner-sub{font-size:11px;opacity:.9;margin-top:2px}
+.app-install-btn{
+background:#10b981;color:white;text-decoration:none;display:inline-block;
+padding:10px 14px;border-radius:8px;font-weight:bold;font-size:13px;
+white-space:nowrap;flex:none;box-shadow:0 2px 6px #00000026
+}
 .step-title{
 font-weight:bold;margin:18px 0 12px;
 display:flex;align-items:center;gap:8px
@@ -254,6 +269,18 @@ padding:10px 24px;border-radius:8px;font-weight:bold
 <p>Photo & Signature Resizer</p>
 <p>Crop • Resize • Exact KB / MB • DPI</p>
 </header>
+
+<!-- DIRECT 1-CLICK ANDROID APP DOWNLOAD BANNER -->
+<div class="app-banner">
+<div class="app-banner-left">
+<img src="logo.png" alt="ResizeProblem App" onerror="this.style.display='none'">
+<div>
+<div class="app-banner-title">ResizeProblem Mobile App</div>
+<div class="app-banner-sub">तेज़ और आसान इस्तेमाल के लिए Android App डाउनलोड करें</div>
+</div>
+</div>
+<a href="https://github.com/resizeproblem/resizeproblem/releases/latest/download/app-release-signed.apk" class="app-install-btn">📲 Download App</a>
+</div>
 
 <!-- STEP 1 -->
 <div class="step-title">
@@ -626,7 +653,6 @@ isRatioLocked = false;
 toggleCropBtn.textContent = '✂️ क्रॉप करें (Crop)';
 toggleCropBtn.classList.add('active-btn');
 lockRatioBtn.style.display = 'none';
-lockRatioBtn.textContent = 'Ratio Lock';
 lockRatioBtn.textContent = 'Ratio Lock';
 imageToCrop.style.pointerEvents = 'none';
 imageToCrop.style.transform = `rotate(${currentRotation}deg)`;
