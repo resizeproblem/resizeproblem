@@ -1168,5 +1168,22 @@ updatePixelPreview();
 <script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }</script>
 
 
+<script>
+(function () {
+  const ua = navigator.userAgent || '';
+
+  // Android WebView की पहचान
+  const isAndroidWebView =
+    /Android/i.test(ua) &&
+    (/;\s*wv\)/i.test(ua) || /Version\/4\.0/i.test(ua));
+
+  // ऐप के अंदर Download App बैनर छिपाएं
+  if (isAndroidWebView) {
+    document.querySelectorAll('.app-banner').forEach(function (banner) {
+      banner.style.display = 'none';
+    });
+  }
+})();
+</script>  
 </body>
 </html>
